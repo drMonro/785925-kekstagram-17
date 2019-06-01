@@ -1,7 +1,8 @@
 # Личный проект «Кекстаграм» [![Build status][travis-image]][travis-url]
 
 * Студент: [Yuriy Shustov](https://up.htmlacademy.ru/javascript/17/user/785925).
-* Наставник: `Неизвестно`.
+* Наставник: [Птетька Волобуев](https://htmlacademy.ru/profile/id635515).
+
 
 ---
 
