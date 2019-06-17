@@ -42,6 +42,7 @@ var generatePhoto = function (index, photoSet) {
 };
 
 var generateAllPhoto = function (picturesCount) {
+  var pictures = [];
   for (var i = 1; i <= picturesCount; i++) {
     pictures.push(generatePhoto(i, {
       photoUrlTemplate: PHOTO_URL_TEMPLATE,
@@ -74,9 +75,7 @@ var renderAllPhotos = function (pictures, fragment, pictureBlock) {
   pictureBlock.appendChild(fragment);
 };
 
-
-var pictures = [];
-pictures = generateAllPhoto(PICTURES_COUNT);
+var pictures = generateAllPhoto(PICTURES_COUNT);
 
 var fragment = document.createDocumentFragment();
 var pictureBlock = document.querySelector('.pictures');
