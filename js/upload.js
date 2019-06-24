@@ -58,7 +58,7 @@ var currentScaleValue = DEFAULT_VALUE;
 var filtersRadioElements = document.querySelectorAll('.effects__radio');
 
 var currentEffectLevel = DEFAULT_VALUE;
-var effectLevelBlock = document.querySelector('.effect-level');
+// var effectLevelBlock = document.querySelector('.effect-level');
 var effectLevelLine = document.querySelector('.effect-level__line');
 var pinElement = document.querySelector('.effect-level__pin');
 var depthEffectLine = document.querySelector('.effect-level__depth');
@@ -87,24 +87,25 @@ var closeImageEditorPopup = function (imageEditor, closingKeyCode) {
   clearForm();
 };
 
-var setFilterVisible = function (isVisible, effectBlock) {
+var setFilterVisible = function (isVisible) {
+  var effectLevelBlock = document.querySelector('.effect-level');
   if (isVisible) {
-    effectBlock.classList.remove('hidden');
+    effectLevelBlock.classList.remove('hidden');
     resetFilterDuration();
   } else {
-    effectBlock.classList.add('hidden');
+    effectLevelBlock.classList.add('hidden');
   }
 };
 
-var resetFilters = function (chosenFilter, effectBlock) {
-  chosenFilter = null;
+var resetFilters = function () {
+  var chosenFilter = null;
   imagePreview.className = '';
   currentScaleValue = DEFAULT_VALUE;
   currentEffectLevel = DEFAULT_VALUE;
   renderScaledImage(currentScaleValue);
   resetFilterDuration();
   renderFilteredImage(chosenFilter);
-  setFilterVisible(false, effectBlock);
+  setFilterVisible(false);
 };
 
 var resetFilterDuration = function () {
@@ -148,15 +149,15 @@ var renderScaledImage = function (value) {
   image.style.transform = 'scale(' + value / 100 + ')';
 };
 
-var onFilterChange = function (filter, effectBlock) {
+var onFilterChange = function (filter) {
   filter.addEventListener('change', function () {
     var selectedFilter = filter.value;
 
     if (selectedFilter === 'none') {
-      resetFilters(selectedFilter, effectBlock);
-      setFilterVisible(false, effectBlock);
+      resetFilters();
+      setFilterVisible(false);
     } else {
-      setFilterVisible(true, effectBlock);
+      setFilterVisible(true);
       renderFilteredImage(selectedFilter);
     }
 
@@ -165,9 +166,9 @@ var onFilterChange = function (filter, effectBlock) {
   });
 };
 
-var setFilterPanelBehavior = function (filterElements, effectBlock) {
+var setFilterPanelBehavior = function (filterElements) {
   filterElements.forEach(function (filter) {
-    onFilterChange(filter, effectBlock);
+    onFilterChange(filter);
   });
 };
 
@@ -281,6 +282,6 @@ pinElement.addEventListener('dragstart', function () {
   return false;
 });
 
-setFilterPanelBehavior(filtersRadioElements, effectLevelBlock);
+setFilterPanelBehavior(filtersRadioElements);
 
 
