@@ -14,6 +14,7 @@ var FILTER_EFFECTS = {
   heat: 'effects__preview--heat',
 };
 
+
 var FILTER_STYLES = {
   none: '',
   chrome: {
