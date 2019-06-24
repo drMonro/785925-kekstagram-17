@@ -166,9 +166,9 @@ var onFilterChange = function (filter, effectBlock) {
 };
 
 var setFilterPanelBehavior = function (filterElements, effectBlock) {
-  for (var i = 0; i < filterElements.length; i++) {
-    onFilterChange(filterElements[i], effectBlock);
-  }
+  filterElements.forEach(function (filter) {
+    onFilterChange(filter, effectBlock);
+  });
 };
 
 var getElementCoordinates = function (elem) {
@@ -203,12 +203,12 @@ var onSliderMouseUp = function () {
 
 var findChosenFilter = function () {
   var filtersRadio = document.querySelectorAll('.effects__radio');
-  for (var i = 0; i < filtersRadio.length; i++) {
-    if (filtersRadio[i].checked) {
-      var selectedFilter = filtersRadio[i].value;
+  filtersRadio.forEach(function (filterRadio) {
+    if (filterRadio.checked) {
+      var selectedFilter = filterRadio.value;
     }
-  }
-  return selectedFilter;
+    return selectedFilter;
+  });
 };
 
 var onSliderMouseMove = function (evt, startPosition, lineCoords, levelLine, pin) {
