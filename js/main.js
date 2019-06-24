@@ -75,6 +75,7 @@ var renderAllPhotos = function (pictures, fragment, pictureBlock) {
   pictureBlock.appendChild(fragment);
 };
 
+
 var pictures = generateAllPhoto(PICTURES_COUNT);
 
 var fragment = document.createDocumentFragment();
