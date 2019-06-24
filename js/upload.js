@@ -67,11 +67,11 @@ var effectLevelValue = document.querySelector('.effect-level__value');
 var openImageEditorPopup = function (imageEditor, closingKeyCode) {
   imageEditor.classList.remove('hidden');
   document.addEventListener('keydown', function (evt) {
-    closeOnPress(evt, imageEditor, closingKeyCode);
+    closeOnPressKey(evt, imageEditor, closingKeyCode);
   });
 };
 
-var closeOnPress = function (evt, imageEditor, closingKeyCode) {
+var closeOnPressKey = function (evt, imageEditor, closingKeyCode) {
   if (evt.keyCode === closingKeyCode) {
     closeImageEditorPopup(imageEditor, closingKeyCode);
   }
@@ -80,30 +80,30 @@ var closeOnPress = function (evt, imageEditor, closingKeyCode) {
 var closeImageEditorPopup = function (imageEditor, closingKeyCode) {
   imageEditor.classList.add('hidden');
   document.removeEventListener('keydown', function (evt) {
-    closeOnPress(evt, imageEditor, closingKeyCode);
+    closeOnPressKey(evt, imageEditor, closingKeyCode);
   });
   resetFilters();
   clearForm();
 };
 
-var setFilterVisible = function (isVisible) {
+var setFilterVisible = function (isVisible, effectBlock) {
   if (isVisible) {
-    effectLevelBlock.classList.remove('hidden');
+    effectBlock.classList.remove('hidden');
     resetFilterDuration();
   } else {
-    effectLevelBlock.classList.add('hidden');
+    effectBlock.classList.add('hidden');
   }
 };
 
-var resetFilters = function (chosenFilter) {
+var resetFilters = function (chosenFilter, effectBlock) {
   chosenFilter = null;
   imagePreview.className = '';
   currentScaleValue = DEFAULT_VALUE;
   currentEffectLevel = DEFAULT_VALUE;
-  setImgPreviewScale(currentScaleValue);
+  renderScaledImage(currentScaleValue);
   resetFilterDuration();
   applyFilterLevelOnPreview(chosenFilter);
-  setFilterVisible(false);
+  setFilterVisible(false, effectBlock);
 };
 
 var resetFilterDuration = function () {
@@ -132,30 +132,30 @@ var clearForm = function () {
 
 var onZoomOut = function (value, scaleStep) {
   value -= scaleStep;
-  setImgPreviewScale(value);
+  renderScaledImage(value);
 };
 
 var onZoomIn = function (value, scaleStep) {
   value += scaleStep;
-  setImgPreviewScale(value);
+  renderScaledImage(value);
 };
 
-var setImgPreviewScale = function (value) {
+var renderScaledImage = function (value) {
   var scaleValueElement = document.querySelector('.scale__control--value');
   var image = document.querySelector('.img-upload__preview');
   scaleValueElement.value = value + '%';
   image.style.transform = 'scale(' + value / 100 + ')';
 };
 
-var onFilterChange = function (filter) {
+var onFilterChange = function (filter, effectBlock) {
   filter.addEventListener('change', function () {
     var selectedFilter = filter.value;
 
     if (selectedFilter === 'none') {
-      resetFilters(selectedFilter);
-      setFilterVisible(false);
+      resetFilters(selectedFilter, effectBlock);
+      setFilterVisible(false, effectBlock);
     } else {
-      setFilterVisible(true);
+      setFilterVisible(true, effectBlock);
       applyFilterLevelOnPreview(selectedFilter);
     }
 
@@ -164,13 +164,13 @@ var onFilterChange = function (filter) {
   });
 };
 
-var setFilterPanelBehavior = function (filterElements) {
+var setFilterPanelBehavior = function (filterElements, effectBlock) {
   for (var i = 0; i < filterElements.length; i++) {
-    onFilterChange(filterElements[i]);
+    onFilterChange(filterElements[i], effectBlock);
   }
 };
 
-var getElemCoords = function (elem) {
+var getElementCoordinates = function (elem) {
   var box = elem.getBoundingClientRect();
 
   return {
@@ -184,12 +184,12 @@ var getPercentsByCoords = function (total, current) {
 };
 
 var onSliderMouseDown = function (evt, pin, levelLine) {
-  var levelPinCoords = getElemCoords(pin);
-  var levelLineCoords = getElemCoords(levelLine);
-  var startPosition = evt.pageX - levelPinCoords.left;
+  var pinCoordinates = getElementCoordinates(pin);
+  var lineCoordinates = getElementCoordinates(levelLine);
+  var startPosition = evt.pageX - pinCoordinates.left;
 
   document.addEventListener('mousemove', function (event) {
-    onSliderMouseMove(event, startPosition, levelLineCoords, levelLine, pin);
+    onSliderMouseMove(event, startPosition, lineCoordinates, levelLine, pin);
   });
   document.addEventListener('mouseup', onSliderMouseUp);
   return false;
@@ -280,6 +280,6 @@ pinElement.addEventListener('dragstart', function () {
   return false;
 });
 
-setFilterPanelBehavior(filtersRadioElements);
+setFilterPanelBehavior(filtersRadioElements, effectLevelBlock);
 
 
