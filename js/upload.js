@@ -102,7 +102,7 @@ var resetFilters = function (chosenFilter, effectBlock) {
   currentEffectLevel = DEFAULT_VALUE;
   renderScaledImage(currentScaleValue);
   resetFilterDuration();
-  applyFilterLevelOnPreview(chosenFilter);
+  renderEffectedImage(chosenFilter);
   setFilterVisible(false, effectBlock);
 };
 
@@ -114,7 +114,7 @@ var resetFilterDuration = function () {
   effectLevelValue.value = currentEffectLevel;
 };
 
-var applyFilterLevelOnPreview = function (chosenFilter) {
+var renderEffectedImage = function (chosenFilter) {
   if (FILTER_STYLES[chosenFilter]) {
     var name = FILTER_STYLES[chosenFilter].name;
     var value = FILTER_STYLES[chosenFilter].max / 100 * currentEffectLevel;
@@ -156,7 +156,7 @@ var onFilterChange = function (filter, effectBlock) {
       setFilterVisible(false, effectBlock);
     } else {
       setFilterVisible(true, effectBlock);
-      applyFilterLevelOnPreview(selectedFilter);
+      renderEffectedImage(selectedFilter);
     }
 
     imagePreview.className = FILTER_EFFECTS[selectedFilter];
@@ -179,7 +179,7 @@ var getElementCoordinates = function (elem) {
   };
 };
 
-var getPercentsByCoords = function (total, current) {
+var getPercentsByCoordinates = function (total, current) {
   return Math.round(100 / total * current);
 };
 
@@ -223,10 +223,10 @@ var onSliderMouseMove = function (evt, startPosition, lineCoords, levelLine, pin
   }
 
   pin.style.left = newPosition + 'px';
-  currentEffectLevel = getPercentsByCoords(lineWidth, newPosition);
+  currentEffectLevel = getPercentsByCoordinates(lineWidth, newPosition);
   depthEffectLine.style.width = currentEffectLevel + '%';
   effectLevelValue.value = currentEffectLevel;
-  applyFilterLevelOnPreview(selectedFilter);
+  renderEffectedImage(selectedFilter);
 };
 
 
