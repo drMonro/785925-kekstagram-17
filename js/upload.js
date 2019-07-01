@@ -204,12 +204,13 @@ var onSliderMouseUp = function () {
 
 var findChosenFilter = function () {
   var filtersRadio = document.querySelectorAll('.effects__radio');
+  var selectedFilter = null;
   filtersRadio.forEach(function (filterRadio) {
     if (filterRadio.checked) {
-      var selectedFilter = filterRadio.value;
+      selectedFilter = filterRadio.value;
     }
-    return selectedFilter;
   });
+  return selectedFilter;
 };
 
 var onSliderMouseMove = function (evt, startPosition, lineCoords, levelLine, pin) {
