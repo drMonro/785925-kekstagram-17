@@ -264,4 +264,5 @@ pinElement.addEventListener('dragstart', function () {
   return false;
 });
 
+
 setFilterPanelBehavior();
