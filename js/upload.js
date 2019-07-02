@@ -13,8 +13,6 @@ var FILTER_EFFECTS = {
   phobos: 'effects__preview--phobos',
   heat: 'effects__preview--heat',
 };
-
-
 var FILTER_STYLES = {
   none: '',
   chrome: {
@@ -43,26 +41,27 @@ var FILTER_STYLES = {
     type: '',
   },
 };
-var DEFAULT_VALUE = 100;
 
 var uploadFileArea = document.getElementById('upload-file');
 var imageEditorForm = document.querySelector('.img-upload__overlay');
 var imageBlock = document.querySelector('.img-upload__preview');
 var imagePreview = imageBlock.children[0];
 var elementPopupClose = document.getElementById('upload-cancel');
-
 var scaleDownButton = document.querySelector('.scale__control--smaller');
 var scaleUpButton = document.querySelector('.scale__control--bigger');
-var currentScaleValue = DEFAULT_VALUE;
-
-var filtersRadioElements = document.querySelectorAll('.effects__radio');
-
-var currentEffectLevel = DEFAULT_VALUE;
-// var effectLevelBlock = document.querySelector('.effect-level');
 var effectLevelLine = document.querySelector('.effect-level__line');
 var pinElement = document.querySelector('.effect-level__pin');
 var depthEffectLine = document.querySelector('.effect-level__depth');
 var effectLevelValue = document.querySelector('.effect-level__value');
+
+var DEFAULT_VALUE = 100;
+var currentScaleValue = DEFAULT_VALUE;
+var currentEffectLevel = DEFAULT_VALUE;
+var selectedFilter = null;
+var levelLineWidth = 0;
+var levelPinCoordinates = null;
+var levelLineCoordinates = null;
+var startPosition = null;
 
 
 var openImageEditorPopup = function (imageEditor, closingKeyCode) {
@@ -98,20 +97,20 @@ var setFilterVisible = function (isVisible) {
 };
 
 var resetFilters = function () {
-  var chosenFilter = null;
+  selectedFilter = null;
   imagePreview.className = '';
   currentScaleValue = DEFAULT_VALUE;
   currentEffectLevel = DEFAULT_VALUE;
   renderScaledImage(currentScaleValue);
   resetFilterDuration();
-  renderFilteredImage(chosenFilter);
+  renderFilteredImage(selectedFilter);
   setFilterVisible(false);
 };
 
 var resetFilterDuration = function () {
-  var lineWidth = effectLevelLine.offsetWidth;
+  levelLineWidth = effectLevelLine.offsetWidth;
   currentEffectLevel = DEFAULT_VALUE;
-  pinElement.style.left = lineWidth + 'px';
+  pinElement.style.left = levelLineWidth + 'px';
   depthEffectLine.style.width = currentEffectLevel + '%';
   effectLevelValue.value = currentEffectLevel;
 };
@@ -130,7 +129,6 @@ var renderFilteredImage = function (chosenFilter) {
 var clearForm = function () {
   uploadFileArea.value = '';
 };
-
 
 var onZoomOut = function (value, scaleStep) {
   value -= scaleStep;
@@ -151,7 +149,7 @@ var renderScaledImage = function (value) {
 
 var onFilterChange = function (filter) {
   filter.addEventListener('change', function () {
-    var selectedFilter = filter.value;
+    selectedFilter = filter.value;
 
     if (selectedFilter === 'none') {
       resetFilters();
@@ -166,8 +164,9 @@ var onFilterChange = function (filter) {
   });
 };
 
-var setFilterPanelBehavior = function (filterElements) {
-  filterElements.forEach(function (filter) {
+var setFilterPanelBehavior = function () {
+  var filtersRadioElements = document.querySelectorAll('.effects__radio');
+  filtersRadioElements.forEach(function (filter) {
     onFilterChange(filter);
   });
 };
@@ -185,14 +184,12 @@ var getPercentsByCoordinates = function (total, current) {
   return Math.round(100 / total * current);
 };
 
-var onSliderMouseDown = function (evt, pin, levelLine) {
-  var pinCoordinates = getElementCoordinates(pin);
-  var lineCoordinates = getElementCoordinates(levelLine);
-  var startPosition = evt.pageX - pinCoordinates.left;
+var onSliderMouseDown = function (evt) {
+  levelPinCoordinates = getElementCoordinates(pinElement);
+  levelLineCoordinates = getElementCoordinates(effectLevelLine);
+  startPosition = evt.pageX - levelPinCoordinates.left;
 
-  document.addEventListener('mousemove', function (event) {
-    onSliderMouseMove(event, startPosition, lineCoordinates, levelLine, pin);
-  });
+  document.addEventListener('mousemove', onSliderMouseMove);
   document.addEventListener('mouseup', onSliderMouseUp);
   return false;
 };
@@ -202,31 +199,17 @@ var onSliderMouseUp = function () {
   document.removeEventListener('mouseup', onSliderMouseUp);
 };
 
-var findChosenFilter = function () {
-  var filtersRadio = document.querySelectorAll('.effects__radio');
-  var selectedFilter = null;
-  filtersRadio.forEach(function (filterRadio) {
-    if (filterRadio.checked) {
-      selectedFilter = filterRadio.value;
-    }
-  });
-  return selectedFilter;
-};
-
-var onSliderMouseMove = function (evt, startPosition, lineCoords, levelLine, pin) {
-  var newPosition = evt.pageX - startPosition - lineCoords.left;
-
-  var selectedFilter = findChosenFilter();
-  var lineWidth = levelLine.offsetWidth;
+var onSliderMouseMove = function (evt) {
+  var newPosition = evt.pageX - startPosition - levelLineCoordinates.left;
 
   if (newPosition < 0) {
     newPosition = 0;
-  } else if (newPosition > lineWidth) {
-    newPosition = lineWidth;
+  } else if (newPosition > levelLineWidth) {
+    newPosition = levelLineWidth;
   }
 
-  pin.style.left = newPosition + 'px';
-  currentEffectLevel = getPercentsByCoordinates(lineWidth, newPosition);
+  pinElement.style.left = newPosition + 'px';
+  currentEffectLevel = getPercentsByCoordinates(levelLineWidth, newPosition);
   depthEffectLine.style.width = currentEffectLevel + '%';
   effectLevelValue.value = currentEffectLevel;
   renderFilteredImage(selectedFilter);
@@ -274,15 +257,11 @@ scaleUpButton.addEventListener('keydown', function (evt) {
   }
 });
 
-pinElement.addEventListener('mousedown', function (evt) {
-  onSliderMouseDown(evt, pinElement, effectLevelLine);
-});
+pinElement.addEventListener('mousedown', onSliderMouseDown);
 
 // Блокирует нативный браузерный dragDrop
 pinElement.addEventListener('dragstart', function () {
   return false;
 });
 
-setFilterPanelBehavior(filtersRadioElements);
-
-
+setFilterPanelBehavior();
