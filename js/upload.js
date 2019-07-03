@@ -147,28 +147,28 @@ var renderScaledImage = function (value) {
   image.style.transform = 'scale(' + value / 100 + ')';
 };
 
-var onFilterChange = function (filter) {
-  filter.addEventListener('change', function () {
-    selectedFilter = filter.value;
-
-    if (selectedFilter === 'none') {
-      resetFilters();
-      setFilterVisible(false);
-    } else {
-      setFilterVisible(true);
-      renderFilteredImage(selectedFilter);
-    }
-
-    imagePreview.className = FILTER_EFFECTS[selectedFilter];
-    currentEffectLevel = DEFAULT_VALUE;
-  });
-};
-
 var setFilterPanelBehavior = function () {
   var filtersRadioElements = document.querySelectorAll('.effects__radio');
   filtersRadioElements.forEach(function (filter) {
-    onFilterChange(filter);
+    filter.addEventListener('change', function () {
+      onFilterChange(filter);
+    });
   });
+};
+
+var onFilterChange = function (filter) {
+  selectedFilter = filter.value;
+
+  if (selectedFilter === 'none') {
+    resetFilters();
+    setFilterVisible(false);
+  } else {
+    setFilterVisible(true);
+    renderFilteredImage(selectedFilter);
+  }
+
+  imagePreview.className = FILTER_EFFECTS[selectedFilter];
+  currentEffectLevel = DEFAULT_VALUE;
 };
 
 var getElementCoordinates = function (elem) {
@@ -264,5 +264,11 @@ pinElement.addEventListener('dragstart', function () {
   return false;
 });
 
+scaleUpButton.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === SPACE_BAR_KEY_CODE && currentScaleValue < MAX_SCALE) {
+    onZoomIn(currentScaleValue, SCALE_STEP);
+    currentScaleValue += SCALE_STEP;
+  }
+});
 
 setFilterPanelBehavior();
