@@ -130,12 +130,12 @@ var clearForm = function () {
   uploadFileArea.value = '';
 };
 
-var onZoomOut = function (value, scaleStep) {
+var imageZoomOut = function (value, scaleStep) {
   value -= scaleStep;
   renderScaledImage(value);
 };
 
-var onZoomIn = function (value, scaleStep) {
+var imageZoomIn = function (value, scaleStep) {
   value += scaleStep;
   renderScaledImage(value);
 };
@@ -151,12 +151,12 @@ var setFilterPanelBehavior = function () {
   var filtersRadioElements = document.querySelectorAll('.effects__radio');
   filtersRadioElements.forEach(function (filter) {
     filter.addEventListener('change', function () {
-      onFilterChange(filter);
+      chooseFilter(filter);
     });
   });
 };
 
-var onFilterChange = function (filter) {
+var chooseFilter = function (filter) {
   selectedFilter = filter.value;
 
   if (selectedFilter === 'none') {
@@ -223,6 +223,7 @@ uploadFileArea.addEventListener('change', function () {
 elementPopupClose.addEventListener('click', function () {
   closeImageEditorPopup(imageEditorForm, ESC_KEY_CODE);
 });
+
 elementPopupClose.addEventListener('keydown', function (evt) {
   if (evt.keyCode === SPACE_BAR_KEY_CODE) {
     closeImageEditorPopup(imageEditorForm, ESC_KEY_CODE);
@@ -231,28 +232,28 @@ elementPopupClose.addEventListener('keydown', function (evt) {
 
 scaleDownButton.addEventListener('click', function () {
   if (currentScaleValue > MIN_SCALE) {
-    onZoomOut(currentScaleValue, SCALE_STEP);
+    imageZoomOut(currentScaleValue, SCALE_STEP);
     currentScaleValue -= SCALE_STEP;
   }
 });
 
 scaleDownButton.addEventListener('keydown', function (evt) {
   if (evt.keyCode === SPACE_BAR_KEY_CODE && currentScaleValue > MIN_SCALE) {
-    onZoomOut(currentScaleValue, SCALE_STEP);
+    imageZoomOut(currentScaleValue, SCALE_STEP);
     currentScaleValue -= SCALE_STEP;
   }
 });
 
 scaleUpButton.addEventListener('click', function () {
   if (currentScaleValue < MAX_SCALE) {
-    onZoomIn(currentScaleValue, SCALE_STEP);
+    imageZoomIn(currentScaleValue, SCALE_STEP);
     currentScaleValue += SCALE_STEP;
   }
 });
 
 scaleUpButton.addEventListener('keydown', function (evt) {
   if (evt.keyCode === SPACE_BAR_KEY_CODE && currentScaleValue < MAX_SCALE) {
-    onZoomIn(currentScaleValue, SCALE_STEP);
+    imageZoomIn(currentScaleValue, SCALE_STEP);
     currentScaleValue += SCALE_STEP;
   }
 });
@@ -266,7 +267,7 @@ pinElement.addEventListener('dragstart', function () {
 
 scaleUpButton.addEventListener('keydown', function (evt) {
   if (evt.keyCode === SPACE_BAR_KEY_CODE && currentScaleValue < MAX_SCALE) {
-    onZoomIn(currentScaleValue, SCALE_STEP);
+    imageZoomIn(currentScaleValue, SCALE_STEP);
     currentScaleValue += SCALE_STEP;
   }
 });
