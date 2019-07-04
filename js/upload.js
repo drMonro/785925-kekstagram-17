@@ -54,6 +54,10 @@ var pinElement = document.querySelector('.effect-level__pin');
 var depthEffectLine = document.querySelector('.effect-level__depth');
 var effectLevelValue = document.querySelector('.effect-level__value');
 
+var uploadWindow = document.querySelector('.img-upload');
+var commentInput = uploadWindow.querySelector('.text__description');
+var isCommentInputFocused = false;
+
 var DEFAULT_VALUE = 100;
 var currentScaleValue = DEFAULT_VALUE;
 var currentEffectLevel = DEFAULT_VALUE;
@@ -72,7 +76,7 @@ var openImageEditorPopup = function (imageEditor, closingKeyCode) {
 };
 
 var closeOnPressKey = function (evt, imageEditor, closingKeyCode) {
-  if (evt.keyCode === closingKeyCode) {
+  if (evt.keyCode === closingKeyCode && !isCommentInputFocused) {
     closeImageEditorPopup(imageEditor, closingKeyCode);
   }
 };
@@ -270,6 +274,14 @@ scaleUpButton.addEventListener('keydown', function (evt) {
     imageZoomIn(currentScaleValue, SCALE_STEP);
     currentScaleValue += SCALE_STEP;
   }
+});
+
+commentInput.addEventListener('focus', function () {
+  isCommentInputFocused = true;
+});
+
+commentInput.addEventListener('focusout', function () {
+  isCommentInputFocused = false;
 });
 
 setFilterPanelBehavior();
