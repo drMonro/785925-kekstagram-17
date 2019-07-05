@@ -56,7 +56,7 @@ var effectLevelValue = document.querySelector('.effect-level__value');
 
 var uploadWindow = document.querySelector('.img-upload');
 var commentInput = uploadWindow.querySelector('.text__description');
-var isCommentInputFocused = false;
+var commentInputFocusStatus = false;
 
 var DEFAULT_VALUE = 100;
 var currentScaleValue = DEFAULT_VALUE;
@@ -76,7 +76,7 @@ var openImageEditorPopup = function (imageEditor, closingKeyCode) {
 };
 
 var closeOnPressKey = function (evt, imageEditor, closingKeyCode) {
-  if (evt.keyCode === closingKeyCode && !isCommentInputFocused) {
+  if (evt.keyCode === closingKeyCode && !commentInputFocusStatus) {
     closeImageEditorPopup(imageEditor, closingKeyCode);
   }
 };
@@ -264,24 +264,12 @@ scaleUpButton.addEventListener('keydown', function (evt) {
 
 pinElement.addEventListener('mousedown', onSliderMouseDown);
 
-// Блокирует нативный браузерный dragDrop
-pinElement.addEventListener('dragstart', function () {
-  return false;
-});
-
-scaleUpButton.addEventListener('keydown', function (evt) {
-  if (evt.keyCode === SPACE_BAR_KEY_CODE && currentScaleValue < MAX_SCALE) {
-    imageZoomIn(currentScaleValue, SCALE_STEP);
-    currentScaleValue += SCALE_STEP;
-  }
-});
-
 commentInput.addEventListener('focus', function () {
-  isCommentInputFocused = true;
+  commentInputFocusStatus = true;
 });
 
 commentInput.addEventListener('focusout', function () {
-  isCommentInputFocused = false;
+  commentInputFocusStatus = false;
 });
 
 setFilterPanelBehavior();
