@@ -1,81 +1,32 @@
 'use strict';
 
 (function () {
-  var PICTURES_COUNT = 25;
-  var PHOTO_URL_TEMPLATE = 'photos/{index}.jpg';
-  var PHOTO_URL_MOCK = '{index}';
-  var MIN_LIKE_AMOUNT = 15;
-  var MAX_LIKE_AMOUNT = 200;
-  var AVATAR_URL_TEMPLATE = 'img/avatar-{index}.svg';
-  var NAMES = [
-    'Ivan',
-    'Marya',
-    'Mika',
-    'Яков',
-    'Анна',
-    'Соня',
-    'Федор',
-  ];
-  var MAX_COMMENTS_AMOUNT = 6;
-  var MIN_COMMENTS_AMOUNT = 1;
-  var COMMENTS_TEXTS = [
-    'Всё отлично!',
-    'В целом всё неплохо. Но не всё.',
-    'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.',
-    'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.',
-    'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
-    'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?',
-  ];
+  var pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
 
-
-  var getRandomNumberFromRange = function (min, max) {
-    return Math.floor(Math.random() * (max - min + 1) + min);
+  var loadPhotoArray = function (data) {
+    var picturesSection = document.querySelector('.pictures');
+    picturesSection.appendChild(window.gallery.addPictures(data));
   };
 
-  var getComments = function (photoSet) {
-    var comments = [];
-    for (var i = 1; i <= getRandomNumberFromRange(photoSet.minCommentsAmount, photoSet.maxCommentsAmount); i++) {
-      comments.push({
-        avatar: photoSet.avatarUrlTemplate.replace(photoSet.avatarUrlMock, i),
-        message: photoSet.commentTexts[getRandomNumberFromRange(0, (photoSet.commentTexts.length - 1))],
-        name: photoSet.names[getRandomNumberFromRange(0, (photoSet.names.length - 1))],
-      });
-    }
-    return comments;
-  };
-
-  var generatePhoto = function (index, photoSet) {
-    return {
-      url: photoSet.photoUrlTemplate.replace(photoSet.avatarUrlMock, index),
-      likes: getRandomNumberFromRange(photoSet.minLikesAmount, photoSet.maxLikesAmount),
-      comments: getComments(photoSet),
-    };
-  };
-
-  var generateAllPhoto = function (picturesCount, photoSet) {
-    var pictures = [];
-    for (var i = 1; i <= picturesCount; i++) {
-      pictures.push(generatePhoto(i, photoSet));
-    }
-    return pictures;
+  var createAndShowErrorMessage = function (errorMessage) {
+    var errorBlock = document.createElement('div');
+    errorBlock.style = 'z-index: 100; margin: 0 auto; text-align: center; background-color: red;';
+    errorBlock.style.position = 'absolute';
+    errorBlock.style.left = 0;
+    errorBlock.style.right = 0;
+    errorBlock.style.fontSize = '30px';
+    errorBlock.style.height = '30px';
+    errorBlock.style.borderBottom = '4px solid yellow';
+    errorBlock.textContent = errorMessage;
+    document.body.insertAdjacentElement('afterbegin', errorBlock);
   };
 
 
-  var picturesData = generateAllPhoto(PICTURES_COUNT, {
-    photoUrlTemplate: PHOTO_URL_TEMPLATE,
-    minLikesAmount: MIN_LIKE_AMOUNT,
-    maxLikesAmount: MAX_LIKE_AMOUNT,
-    maxCommentsAmount: MAX_COMMENTS_AMOUNT,
-    minCommentsAmount: MIN_COMMENTS_AMOUNT,
-    avatarUrlTemplate: AVATAR_URL_TEMPLATE,
-    avatarUrlMock: PHOTO_URL_MOCK,
-    commentTexts: COMMENTS_TEXTS,
-    names: NAMES,
-  });
+  window.backend.load(loadPhotoArray, createAndShowErrorMessage);
 
 
   window.data = {
-    picturesData: picturesData,
+    pictureTemplate: pictureTemplate,
   };
 
 })();

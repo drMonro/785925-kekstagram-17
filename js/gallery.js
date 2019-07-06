@@ -1,18 +1,17 @@
 'use strict';
 
 (function () {
-
-  var renderAllPhotos = function (pictures) {
+  var addPictures = function (photos) {
     var fragment = document.createDocumentFragment();
-    var pictureBlock = document.querySelector('.pictures');
-    pictures.forEach(function (picture) {
-      fragment.appendChild(window.picture.renderPhotoBlock(picture));
-    });
+    for (var i = 0; i < photos.length; i++) {
+      fragment.appendChild(window.picture.renderPicture(photos, i));
+    }
 
-    pictureBlock.appendChild(fragment);
+    return fragment;
   };
 
-
-  renderAllPhotos(window.data.picturesData);
+  window.gallery = {
+    addPictures: addPictures
+  };
 
 })();

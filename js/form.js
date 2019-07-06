@@ -30,12 +30,12 @@
       closeOnPressKey(evt, imageEditor, closingKeyCode);
     });
     window.preview.resetFilters();
-    clearForm();
+    // clearForm();
   };
 
-  var clearForm = function () {
-    uploadFileArea.value = '';
-  };
+  // var clearForm = function () {
+  //   uploadFileArea.value = '';
+  // };
 
 
   uploadFileArea.addEventListener('change', function () {
