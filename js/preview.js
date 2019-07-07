@@ -40,7 +40,6 @@
       type: '',
     },
   };
-
   var imageBlock = document.querySelector('.img-upload__preview');
   var imagePreview = imageBlock.children[0];
   var scaleDownButton = document.querySelector('.scale__control--smaller');
@@ -221,4 +220,5 @@
   window.preview = {
     resetFilters: resetFilters,
   };
+
 })();
