@@ -152,7 +152,7 @@
     return Math.round(100 / total * current);
   };
 
-  var onSliderMouseDown = function (evt) {
+  var onSliderMouseDrag = function (evt) {
     levelPinCoordinates = getElementCoordinates(pinElement);
     levelLineCoordinates = getElementCoordinates(effectLevelLine);
     startPosition = evt.pageX - levelPinCoordinates.left;
@@ -212,7 +212,7 @@
     }
   });
 
-  pinElement.addEventListener('mousedown', onSliderMouseDown);
+  pinElement.addEventListener('mousedown', onSliderMouseDrag);
 
   setFilterPanelBehavior();
 

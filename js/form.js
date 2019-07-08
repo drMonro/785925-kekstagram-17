@@ -18,9 +18,9 @@
     });
   };
 
-  var closeOnPressKey = function (evt, imageEditor, closingKeyCode) {
+  var closeOnPressKey = function (evt, popup, closingKeyCode) {
     if (evt.keyCode === closingKeyCode && !commentInputFocusStatus) {
-      closeImageEditorPopup(imageEditor, closingKeyCode);
+      closeImageEditorPopup(popup, closingKeyCode);
     }
   };
 
@@ -63,6 +63,8 @@
 
   window.form = {
     SPACE_BAR_KEY_CODE: SPACE_BAR_KEY_CODE,
+    ESC_KEY_CODE: ESC_KEY_CODE,
+    closeOnPressKey: closeOnPressKey
   };
 
 })();
