@@ -1,9 +1,9 @@
 'use strict';
 
 (function () {
-  var DEBOUNCE_INTERVAL = 500; // ms
+  var DEBOUNCE_INTERVAL = 500;
 
-  var debounce = function (cb) {
+  var debounce = function (cb, interval) {
     var lastTimeout = null;
 
     return function () {
@@ -13,12 +13,13 @@
       }
       lastTimeout = window.setTimeout(function () {
         cb.apply(null, parameters);
-      }, DEBOUNCE_INTERVAL);
+      }, interval);
     };
   };
 
 
   window.data = {
     debounce: debounce,
+    DEBOUNCE_INTERVAL: DEBOUNCE_INTERVAL,
   };
 })();

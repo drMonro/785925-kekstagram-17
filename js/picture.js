@@ -13,7 +13,6 @@
     bigPictureCloseElement.addEventListener('click', onCloseElementClick);
     document.addEventListener('keydown', function (evt) {
       window.form.closeOnPressKey(evt, bigPictureElement, window.form.ESC_KEY_CODE);
-
     });
   };
 
