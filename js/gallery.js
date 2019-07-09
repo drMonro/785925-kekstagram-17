@@ -112,8 +112,8 @@
 
   var sortAndRenderImages = window.data.debounce(function (sortedArr) {
     renderImages(sortedArr);
-  }, window.data.DEBOUNCE_INTERVAL);
+  });
 
-  window.backend.load(window.backend.DATA_URL, successHandler, errorHandler);
+  window.backend.load(successHandler, errorHandler);
 
 })();

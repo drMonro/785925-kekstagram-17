@@ -8,11 +8,11 @@
     var bigPictureCloseElement = bigPictureElement.querySelector('.big-picture__cancel');
 
     displayBigPicture(data);
-    displayBigPictureBlock();
+    displayBigPictureFeatures();
 
     bigPictureCloseElement.addEventListener('click', onCloseElementClick);
-    document.addEventListener('keydown', function (evt) {
-      window.form.closeOnPressKey(evt, bigPictureElement, window.form.ESC_KEY_CODE);
+    document.addEventListener('keydown', function () {
+      window.utils.closePopup(bigPictureElement);
     });
   };
 
@@ -57,7 +57,7 @@
     });
   };
 
-  var displayBigPictureBlock = function () {
+  var displayBigPictureFeatures = function () {
     var commentsCountElement = bigPictureElement.querySelector('.social__comment-count');
     var commentLoaderElement = bigPictureElement.querySelector('.comments-loader');
     bigPictureElement.classList.remove('hidden');

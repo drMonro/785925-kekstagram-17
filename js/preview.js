@@ -48,6 +48,8 @@
   var pinElement = document.querySelector('.effect-level__pin');
   var depthEffectLine = document.querySelector('.effect-level__depth');
   var effectLevelValue = document.querySelector('.effect-level__value');
+  var filtersRadioElements = document.querySelectorAll('.effects__radio');
+
   var DEFAULT_VALUE = 100;
   var currentScaleValue = DEFAULT_VALUE;
   var currentEffectLevel = DEFAULT_VALUE;
@@ -69,6 +71,7 @@
   };
 
   var resetFilters = function () {
+    filtersRadioElements[0].checked = true;
     selectedFilter = null;
     imagePreview.className = '';
     currentScaleValue = DEFAULT_VALUE;
@@ -110,13 +113,11 @@
 
   var renderScaledImage = function (value) {
     var scaleValueElement = document.querySelector('.scale__control--value');
-    var image = document.querySelector('.img-upload__preview');
     scaleValueElement.value = value + '%';
-    image.style.transform = 'scale(' + value / 100 + ')';
+    imageBlock.style.transform = 'scale(' + value / 100 + ')';
   };
 
   var setFilterPanelBehavior = function () {
-    var filtersRadioElements = document.querySelectorAll('.effects__radio');
     filtersRadioElements.forEach(function (filter) {
       filter.addEventListener('change', function () {
         chooseFilter(filter);

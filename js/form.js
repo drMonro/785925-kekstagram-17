@@ -1,19 +1,17 @@
 'use strict';
 
 (function () {
-  var ESC_KEY_CODE = 27;
-  var SPACE_BAR_KEY_CODE = 32;
-  var imageEditorForm = document.querySelector('.img-upload__overlay');
-  var elementPopupClose = document.getElementById('upload-cancel');
-  var uploadWindow = document.querySelector('.img-upload');
-  var commentInputFocusStatus = false;
-  var tagInputFocusStatus = false;
-  var commentInput = uploadWindow.querySelector('.text__description');
-  var uploadFileArea = document.getElementById('upload-file');
-  var hashTagsInput = imageEditorForm.querySelector('.text__hashtags');
+  var imageEditorOverlay = document.querySelector('.img-upload__overlay');
+  var imageEditorForm = document.querySelector('.img-upload__form');
+  var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
+  var mainContainer = document.querySelector('main');
+  var imageUploadForm = document.querySelector('.img-upload__form');
+  var uploadFileInput = imageUploadForm.querySelector('#upload-file');
+  var hashTagsInput = imageUploadForm.querySelector('.text__hashtags');
+  var commentInput = imageUploadForm.querySelector('.text__description');
 
 
-  function onHashTagsInputValidation() {
+  function addValidationHashTags() {
     var hashTags = hashTagsInput.value
       .split(' ')
       .map(function (hashTag) {
@@ -22,11 +20,13 @@
 
     var message = '';
 
-    if (hashTags.length > 5) {
+    if (hashTagsInput.value.length === 0) {
+      message = '';
+    } else if (hashTags.length === 5) {
       message = 'Нельзя указать больше пяти хэш-тегов';
     } else {
       for (var i = 0; i < hashTags.length; i++) {
-        message = validationHashTag(hashTags, i);
+        message = getValidationHashTagsErrorMessage(hashTags, i);
         if (message) {
           break;
         }
@@ -36,7 +36,7 @@
     hashTagsInput.setCustomValidity(message);
   }
 
-  function validationHashTag(hashTags, i) {
+  function getValidationHashTagsErrorMessage(hashTags, i) {
     var message = '';
     if (hashTags[i].charAt(0) !== '#') {
       message = 'Хеш-теги должны начинаться с "#"';
@@ -56,66 +56,70 @@
     return message;
   }
 
-
-  var openImageEditorPopup = function (imageEditor, closingKeyCode) {
-    imageEditor.classList.remove('hidden');
-    document.addEventListener('keydown', function (evt) {
-      closeOnPressKey(evt, imageEditor, closingKeyCode);
+  function onSuccess() {
+    window.utils.closePopup(imageEditorOverlay);
+    showUploadStatusMessage('success');
+    var successButton = document.querySelector('.success__button');
+    var successOverlay = document.querySelector('.success');
+    successButton.addEventListener('click', function () {
+      successOverlay.remove();
     });
-  };
+  }
 
-  var closeOnPressKey = function (evt, popup, closingKeyCode) {
-    if (evt.keyCode === closingKeyCode && !commentInputFocusStatus && !tagInputFocusStatus) {
-      closeImageEditorPopup(popup, closingKeyCode);
+  function onError() {
+    window.utils.closePopup(imageEditorOverlay);
+    showUploadStatusMessage('error');
+    var errorButtons = document.querySelectorAll('.error__button');
+    var errorOverlay = document.querySelector('.error');
+
+    errorButtons.forEach(function (button) {
+      button.addEventListener('click', function () {
+        errorOverlay.remove();
+      });
+    });
+  }
+
+  function showUploadStatusMessage(classNameMessage) {
+    var messageTemplate = document.querySelector('#' + classNameMessage)
+      .content.querySelector('.' + classNameMessage)
+      .cloneNode(true);
+    mainContainer.appendChild(messageTemplate);
+  }
+
+
+  uploadFileInput.addEventListener('change', function (evt) {
+    var fileName = evt.target.value.toLowerCase();
+
+    var fileFormatMatches = FILE_TYPES.some(function (it) {
+      return fileName.endsWith(it);
+    });
+
+    if (!fileFormatMatches) {
+      return false;
     }
-  };
 
-  var closeImageEditorPopup = function (imageEditor, closingKeyCode) {
-    imageEditor.classList.add('hidden');
-    document.removeEventListener('keydown', function (evt) {
-      closeOnPressKey(evt, imageEditor, closingKeyCode);
-    });
     window.preview.resetFilters();
-  };
-
-
-  uploadFileArea.addEventListener('change', function () {
-    openImageEditorPopup(imageEditorForm, ESC_KEY_CODE);
+    window.utils.openPopup(imageEditorOverlay);
+    return true;
   });
 
-  elementPopupClose.addEventListener('click', function () {
-    closeImageEditorPopup(imageEditorForm, ESC_KEY_CODE);
+  hashTagsInput.addEventListener('input', function () {
+    addValidationHashTags();
   });
 
-  elementPopupClose.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === SPACE_BAR_KEY_CODE) {
-      closeImageEditorPopup(imageEditorForm, ESC_KEY_CODE);
-    }
-  });
+  imageUploadForm.addEventListener('submit', function (evt) {
+    evt.preventDefault();
+    var data = new FormData(imageUploadForm);
+    window.backend.save(data, onSuccess, onError);
+    imageEditorForm.reset();
 
-  commentInput.addEventListener('focus', function () {
-    commentInputFocusStatus = true;
   });
-
-  commentInput.addEventListener('focusout', function () {
-    commentInputFocusStatus = false;
-  });
-
-  hashTagsInput.addEventListener('focus', function () {
-    commentInputFocusStatus = true;
-  });
-
-  hashTagsInput.addEventListener('focusout', function () {
-    commentInputFocusStatus = false;
-  });
-
-  hashTagsInput.addEventListener('input', onHashTagsInputValidation);
 
 
   window.form = {
-    SPACE_BAR_KEY_CODE: SPACE_BAR_KEY_CODE,
-    ESC_KEY_CODE: ESC_KEY_CODE,
-    closeOnPressKey: closeOnPressKey
+    commentInput: commentInput,
+    hashTagsInput: hashTagsInput,
+    imageEditorForm: imageEditorForm,
   };
 
 })();
