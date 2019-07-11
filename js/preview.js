@@ -114,7 +114,7 @@
   var renderScaledImage = function (value) {
     var scaleValueElement = document.querySelector('.scale__control--value');
     scaleValueElement.value = value + '%';
-    imageBlock.style.transform = 'scale(' + value / 100 + ')';
+    imagePreview.style.transform = 'scale(' + value / 100 + ')';
   };
 
   var setFilterPanelBehavior = function () {

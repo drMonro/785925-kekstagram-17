@@ -11,10 +11,10 @@
     popup.classList.remove('hidden');
     var closeButton = document.querySelector('.cancel');
     document.addEventListener('keydown', function (evt) {
-      closeOnPressKey(evt, popup);
+      closePopupIfKeyIsEsc(evt, popup);
     });
     closeButton.addEventListener('keydown', function (evt) {
-      closeOnPressKey(evt, popup);
+      closePopupIfKeyIsEsc(evt, popup);
     });
 
     closeButton.addEventListener('click', function () {
@@ -22,7 +22,7 @@
     });
   };
 
-  var closeOnPressKey = function (evt, popup) {
+  var closePopupIfKeyIsEsc = function (evt, popup) {
     var closingKeyCode = ESC_KEY_CODE;
     if (evt.keyCode === closingKeyCode && !commentInputFocusStatus && !tagInputFocusStatus) {
       closePopup(popup);
@@ -32,19 +32,18 @@
   var closePopup = function (popup) {
 
     popup.classList.add('hidden');
-    window.form.imageEditorForm.reset();
 
     document.removeEventListener('keydown', function (evt) {
-      closeOnPressKey(evt, popup);
+      closePopupIfKeyIsEsc(evt, popup);
     });
 
   };
 
-  window.form.commentInput.addEventListener('focus', function () {
+  window.form.commentsInput.addEventListener('focus', function () {
     commentInputFocusStatus = true;
   });
 
-  window.form.commentInput.addEventListener('focusout', function () {
+  window.form.commentsInput.addEventListener('focusout', function () {
     commentInputFocusStatus = false;
   });
 
@@ -62,5 +61,6 @@
     ESC_KEY_CODE: ESC_KEY_CODE,
     openPopup: openPopup,
     closePopup: closePopup,
+    closePopupIfKeyIsEsc: closePopupIfKeyIsEsc,
   };
 })();
