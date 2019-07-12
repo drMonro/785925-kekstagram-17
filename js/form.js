@@ -22,7 +22,6 @@
 
   var onEditFormEscPress = function (evt) {
     var closingKeyCode = window.utils.ESC_KEY_CODE;
-
     if (evt.keyCode === closingKeyCode && !commentInputFocusStatus && !tagInputFocusStatus) {
       imageEditorOverlay.classList.add('hidden');
       imageUploadForm.reset();
@@ -51,12 +50,12 @@
         }
       }
     }
+
     hashTagsInput.setCustomValidity(message);
   };
 
   var getValidationHashTagsErrorMessage = function (hashTags, i) {
     var message = '';
-
     if (hashTags[i].charAt(0) === '') {
       message = '';
     } else if (hashTags[i].charAt(0) !== '#') {
@@ -75,7 +74,6 @@
 
   var addValidationComments = function () {
     var message = '';
-
     if (commentsInput.value.length > 140) {
       message = 'Максимальная длина комментария 140 символов';
     }
@@ -83,14 +81,13 @@
   };
 
   var onSuccess = function () {
-    var successButton = document.querySelector('.success__button');
-
     closeImageEditForm();
     imageEditorForm.reset();
     showUploadStatusMessage('success');
+    var successButton = document.querySelector('.success__button');
     mainContainer.addEventListener('click', onSuccessWindowOutsideCLick);
     successButton.addEventListener('click', removeWindowSuccessUpload);
-    document.addEventListener('keydown', onFormEscPress);
+    document.addEventListener('keydown', onSuccessMessageEscPress);
   };
 
   var closeImageEditForm = function () {
@@ -102,16 +99,8 @@
     var messageTemplate = document.querySelector('#' + classNameMessage)
       .content.querySelector('.' + classNameMessage)
       .cloneNode(true);
-
     mainContainer.appendChild(messageTemplate);
   };
-
-  var onSuccessWindowOutsideCLick = function (evt) {
-    if (isClickOutside(evt, '.success__inner')) {
-      removeWindowSuccessUpload();
-    }
-  };
-
   var isClickOutside = function (evt, cssSelector) {
     var target = evt.target;
     var element = target.closest(cssSelector);
@@ -119,27 +108,36 @@
     return !element;
   };
 
+  var onSuccessWindowOutsideCLick = function (evt) {
+    if (isClickOutside(evt, '.success__inner')) {
+      removeWindowSuccessUpload();
+    }
+    mainContainer.removeEventListener('click', onSuccessWindowOutsideCLick);
+  };
+
   var removeWindowSuccessUpload = function () {
     var successMessage = document.querySelector('.success');
 
     successMessage.remove();
+
     mainContainer.removeEventListener('click', onSuccessWindowOutsideCLick);
-    document.removeEventListener('keydown', onFormEscPress);
+    document.removeEventListener('keydown', onSuccessMessageEscPress);
   };
 
-  var onFormEscPress = function (evt) {
+  var onSuccessMessageEscPress = function (evt) {
     window.utils.isEscEvent(evt, removeWindowSuccessUpload);
   };
 
   var onError = function () {
+    closeImageEditForm();
+    showUploadStatusMessage('error');
     var errorButtons = document.querySelector('.error__buttons');
     var cancelButton = errorButtons.querySelector('.error__button:last-child');
     var retryButton = errorButtons.querySelector('.error__button:first-child');
     var errorOverlay = document.querySelector('.error');
 
-    closeImageEditForm();
-    showUploadStatusMessage('error');
     mainContainer.addEventListener('click', onErrorWindowOutsideCLick);
+    document.addEventListener('keydown', onErrorMessageEscPress);
     cancelButton.addEventListener('click', function () {
       errorOverlay.remove();
       imageEditorForm.reset();
@@ -150,11 +148,19 @@
     });
   };
 
+  var onErrorMessageEscPress = function (evt) {
+    window.utils.isEscEvent(evt, removeWindowErrorUpload);
+    imageEditorForm.reset();
+  };
+
   var onErrorWindowOutsideCLick = function (evt) {
     if (isClickOutside(evt, '.error__inner')) {
       removeWindowErrorUpload();
       imageEditorForm.reset();
+      mainContainer.removeEventListener('click', onErrorWindowOutsideCLick);
     }
+
+    mainContainer.removeEventListener('click', onErrorWindowOutsideCLick);
   };
 
   var removeWindowErrorUpload = function () {
@@ -162,23 +168,36 @@
 
     errorMessage.remove();
     mainContainer.removeEventListener('click', onErrorWindowOutsideCLick);
-    document.removeEventListener('keydown', onFormEscPress);
+    document.removeEventListener('keydown', onSuccessMessageEscPress);
   };
 
 
   uploadFileInput.addEventListener('change', function (evt) {
     var fileName = evt.target.value.toLowerCase();
+    var file = uploadFileInput.files[0];
+
+
     var fileFormatMatches = FILE_TYPES.some(function (it) {
       return fileName.endsWith(it);
     });
 
     if (!fileFormatMatches) {
       return false;
+    } else {
+      var reader = new FileReader();
+
+      reader.addEventListener('load', function () {
+        window.preview.imgPreviewElement.src = reader.result;
+      });
+
+      reader.readAsDataURL(file);
     }
+
     window.preview.resetFilters();
     window.utils.showHiddenBlock(imageEditorOverlay);
     imageEditorCloseElement.addEventListener('click', onEditFormCloseElementClick);
     document.addEventListener('keydown', onEditFormEscPress);
+
     return true;
   });
 

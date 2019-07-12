@@ -41,6 +41,7 @@
     },
   };
   var imageBlock = document.querySelector('.img-upload__preview');
+  var imgPreviewElement = imageBlock.querySelector('img');
   var imagePreview = imageBlock.children[0];
   var scaleDownButton = document.querySelector('.scale__control--smaller');
   var scaleUpButton = document.querySelector('.scale__control--bigger');
@@ -219,6 +220,7 @@
 
   window.preview = {
     resetFilters: resetFilters,
+    imgPreviewElement: imgPreviewElement
   };
 
 })();
