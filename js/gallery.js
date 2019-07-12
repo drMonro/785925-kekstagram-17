@@ -49,20 +49,22 @@
     filters.classList.remove('img-filters--inactive');
     setSortingButtonsBehavior();
     picturesList.addEventListener('click', onPicturesClick);
+
   };
 
   var onPicturesClick = function (evt) {
-    var pictureElement = evt.target.closest('.picture');
+    var target = evt.target;
+    var pictureElement = target.closest('.picture');
 
     if (!pictureElement) {
       return;
     }
 
     var imageElement = pictureElement.querySelector('.picture__img');
-    var pictureSrc = imageElement.getAttribute('src');
-    var pictureData = getPictureData(pictureSrc);
+    var imageSrc = imageElement.getAttribute('src');
+    var imageData = getPictureData(imageSrc);
 
-    window.picture.showBigPictureForm(pictureData);
+    window.picture.showBigPicture(imageData);
   };
 
   var getPictureData = function (imageSrc) {
@@ -95,12 +97,12 @@
     });
   };
 
-  var compareRandom = function () {
-    return Math.random() - 0.5;
-  };
-
   var getImagesForSortingNew = function () {
     return pictures.slice().sort(compareRandom).slice(0, 9);
+  };
+
+  var compareRandom = function () {
+    return Math.random() - 0.5;
   };
 
   var getImagesForSortingDiscussed = function () {
@@ -109,10 +111,10 @@
     });
   };
 
-
   var sortAndRenderImages = window.data.debounce(function (sortedArr) {
     renderImages(sortedArr);
   });
+
 
   window.backend.load(successHandler, errorHandler);
 

@@ -49,7 +49,6 @@
   var depthEffectLine = document.querySelector('.effect-level__depth');
   var effectLevelValue = document.querySelector('.effect-level__value');
   var filtersRadioElements = document.querySelectorAll('.effects__radio');
-
   var DEFAULT_VALUE = 100;
   var currentScaleValue = DEFAULT_VALUE;
   var currentEffectLevel = DEFAULT_VALUE;

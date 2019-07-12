@@ -1,7 +1,6 @@
 'use strict';
 
 (function () {
-
   var backend = {
     load: function (onSuccess, onError) {
       var URL = 'https://js.dump.academy/kekstagram/data';
@@ -11,10 +10,10 @@
     save: function (data, onSuccess, onError) {
       var URL = 'https://js.dump.academy/kekstagram';
       createRequest('POST', URL, onSuccess, onError, data);
-    }
+    },
   };
 
-  function createRequest(method, url, onSuccess, onError, data) {
+  var createRequest = function (method, url, onSuccess, onError, data) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
 
@@ -31,12 +30,11 @@
     xhr.addEventListener('timeout', function () {
       onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
     });
-
-    xhr.timeout = 10000; // 10s
-
+    xhr.timeout = 10000;
     xhr.open(method, url);
     xhr.send(data);
-  }
+  };
+
 
   window.backend = backend;
 })();
