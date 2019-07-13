@@ -1,9 +1,10 @@
 'use strict';
 
 (function () {
+  var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
+
   var imageEditorOverlay = document.querySelector('.img-upload__overlay');
   var imageEditorForm = document.querySelector('.img-upload__form');
-  var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
   var mainContainer = document.querySelector('main');
   var imageUploadForm = document.querySelector('.img-upload__form');
   var uploadFileInput = imageUploadForm.querySelector('#upload-file');
@@ -43,12 +44,12 @@
     } else if (hashTags.length === 5) {
       message = 'Нельзя указать больше пяти хэш-тегов';
     } else {
-      for (var i = 0; i < hashTags.length; i++) {
-        message = getValidationHashTagsErrorMessage(hashTags, i);
+      hashTags.forEach(function (tag, index) {
+        message = getValidationHashTagsErrorMessage(hashTags, index);
         if (message) {
-          break;
+          return;
         }
-      }
+      });
     }
 
     hashTagsInput.setCustomValidity(message);

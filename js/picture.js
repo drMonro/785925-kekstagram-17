@@ -1,14 +1,15 @@
 'use strict';
 
 (function () {
+  var MIN_COMMENTS_COUNT = 5;
+
   var bigPictureForm = document.querySelector('.big-picture');
   var commentsLoaderButton = bigPictureForm.querySelector('.comments-loader');
   var commentsList = document.querySelector('.social__comments');
-  var comments;
-  var COMMENTS_COUNT = 5;
-  var bigPictureElement = document.querySelector('.big-picture');
-  var commentLoaderElement = bigPictureElement.querySelector('.comments-loader');
+  var comments = null;
+  var commentLoaderElement = bigPictureForm.querySelector('.comments-loader');
   var commentIndex = 0;
+  var commentsCounterElement = bigPictureForm.querySelector('.comments-count');
 
 
   var showBigPicture = function (data) {
@@ -25,8 +26,8 @@
     var bigPictureBlock = bigPictureForm.querySelector('.big-picture__img');
     var bigPictureImgElement = bigPictureBlock.querySelector('img');
     var likesCounterElement = bigPictureForm.querySelector('.likes-count');
-    var commentsCounterElement = bigPictureForm.querySelector('.comments-count');
     var bigPictureDescription = bigPictureForm.querySelector('.social__caption');
+
     comments = dataPhoto.comments;
 
     var firstLoadCommentList = getCommentListFragment(comments);
@@ -48,7 +49,6 @@
 
   var onLoaderCommentsClick = function () {
     var fragmentCommentList = getCommentListFragment(comments);
-
     commentsList.appendChild(fragmentCommentList);
   };
 
@@ -68,7 +68,7 @@
     var fragment = document.createDocumentFragment();
     var counter = 0;
 
-    while (commentIndex < commentsFragment.length && counter < COMMENTS_COUNT) {
+    while (commentIndex < commentsFragment.length && counter < MIN_COMMENTS_COUNT) {
       fragment.appendChild(createComment(commentsFragment[commentIndex]));
       commentIndex++;
       counter++;
@@ -78,12 +78,12 @@
     } else {
       commentLoaderElement.classList.add('hidden');
     }
-    insertCommentsCounter(commentsFragment.length);
+    setCommentsCount();
     return fragment;
   };
 
   var createComment = function (comment) {
-    var commentElement = bigPictureElement.querySelector('.social__comment');
+    var commentElement = bigPictureForm.querySelector('.social__comment');
     var elementDescription = commentElement.cloneNode(true);
 
     elementDescription.querySelector('.social__text').textContent = comment.message;
@@ -91,11 +91,10 @@
     return elementDescription;
   };
 
-  var insertCommentsCounter = function (commentsCount) {
-    var commentCountElement = bigPictureElement.querySelector('.social__comment-count');
-    var stringCountCommentElement = commentCountElement.innerHTML = commentIndex + ' из <span class="comments-count">' + commentsCount + '</span> комментариев';
+  var setCommentsCount = function () {
+    var socialCommentsCurrentCnt = bigPictureForm.querySelector('.current-comments-count');
+    socialCommentsCurrentCnt.textContent = commentIndex;
 
-    return stringCountCommentElement;
   };
 
   var resetIndex = function () {

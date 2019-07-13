@@ -1,7 +1,6 @@
 'use strict';
 
 (function () {
-
   var DEBOUNCE_INTERVAL = 500;
 
   var debounce = function (cb) {
