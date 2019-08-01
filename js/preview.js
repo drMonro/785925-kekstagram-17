@@ -4,15 +4,15 @@
   var MIN_SCALE = 25;
   var MAX_SCALE = 100;
   var SCALE_STEP = 25;
-  var FILTER_EFFECTS = {
-    none: '',
-    chrome: 'effects__preview--chrome',
-    sepia: 'effects__preview--sepia',
-    marvin: 'effects__preview--marvin',
-    phobos: 'effects__preview--phobos',
-    heat: 'effects__preview--heat',
+  var FilterEffect = {
+    NONE: '',
+    CHROME: 'effects__preview--chrome',
+    SEPIA: 'effects__preview--sepia',
+    MARVIN: 'effects__preview--marvin',
+    PHOBOS: 'effects__preview--phobos',
+    HEAT: 'effects__preview--heat',
   };
-  var FILTER_STYLES = {
+  var FilerStyle = {
     none: '',
     chrome: {
       name: 'grayscale',
@@ -38,7 +38,7 @@
       name: 'brightness',
       max: 3,
       type: '',
-    },
+    }
   };
   var imageBlock = document.querySelector('.img-upload__preview');
   var imgPreviewElement = imageBlock.querySelector('img');
@@ -91,10 +91,10 @@
   };
 
   var renderFilteredImage = function (chosenFilter) {
-    if (FILTER_STYLES[chosenFilter]) {
-      var name = FILTER_STYLES[chosenFilter].name;
-      var value = FILTER_STYLES[chosenFilter].max / 100 * currentEffectLevel;
-      var type = FILTER_STYLES[chosenFilter].type;
+    if (FilerStyle[chosenFilter]) {
+      var name = FilerStyle[chosenFilter].name;
+      var value = FilerStyle[chosenFilter].max / 100 * currentEffectLevel;
+      var type = FilerStyle[chosenFilter].type;
       imagePreview.style.filter = name + '(' + value + type + ')';
     } else {
       imagePreview.style.filter = '';
@@ -136,7 +136,7 @@
       renderFilteredImage(selectedFilter);
     }
 
-    imagePreview.className = FILTER_EFFECTS[selectedFilter];
+    imagePreview.className = FilterEffect[selectedFilter];
     currentEffectLevel = DEFAULT_VALUE;
   };
 

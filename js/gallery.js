@@ -2,34 +2,40 @@
 
 (function () {
   var pictures = [];
-  var picturesList = document.querySelector('.pictures');
+  var picturesSection = document.querySelector('.pictures');
 
-  var createPicture = function (params) {
-    var pictureTemplate = document.querySelector('#picture')
-      .content
-      .querySelector('.picture');
-    var element = pictureTemplate.cloneNode(true);
-
-    element.querySelector('.picture__img').src = params.url;
-    element.querySelector('.picture__comments').textContent = params.comments.length;
-    element.querySelector('.picture__likes').textContent = params.likes;
-    return element;
-  };
 
   var renderImages = function (images) {
     var fragment = document.createDocumentFragment();
+    var picturesList = picturesSection.querySelectorAll('.picture');
 
-    document.querySelectorAll('.picture').forEach(function (item) {
+    picturesList.forEach(function (item) {
       item.remove();
     });
-    images.forEach(function (item) {
-      fragment.appendChild(createPicture(item));
+    images.forEach(function (picture) {
+      fragment.appendChild(createPicture(picture));
     });
-    picturesList.appendChild(fragment);
+    picturesSection.appendChild(fragment);
+  };
+
+  var createPicture = function (picture) {
+    var pictureTemplate = document.querySelector('#picture')
+      .content
+      .querySelector('.picture');
+    var pictureElement = pictureTemplate.cloneNode(true);
+
+    pictureElement.querySelector('.picture__img').src = picture.url;
+    pictureElement.querySelector('.picture__comments').textContent = picture.comments.length;
+    pictureElement.querySelector('.picture__likes').textContent = picture.likes;
+    pictureElement.addEventListener('click', function () {
+      window.picture.showBigPicture(picture);
+    });
+    return pictureElement;
   };
 
   var errorHandler = function (errorMessage) {
     var errorBlock = document.createElement('div');
+    errorBlock.classList = 'errorMessage';
     errorBlock.style = 'z-index: 100; margin: 0 auto; text-align: center; background-color: red;';
     errorBlock.style.position = 'absolute';
     errorBlock.style.left = 0;
@@ -43,47 +49,28 @@
 
   var successHandler = function (webData) {
     var filters = document.querySelector('.img-filters');
+    var errorMessages = document.querySelectorAll('.errorMessage');
 
-    pictures = webData;
+    errorMessages.forEach(function (item) {
+      item.remove();
+    });
+
+    saveWebData(webData);
     renderImages(pictures);
+
     filters.classList.remove('img-filters--inactive');
     setSortingButtonsBehavior();
-    picturesList.addEventListener('click', onPicturesClick);
-
   };
 
-  var onPicturesClick = function (evt) {
-    var target = evt.target;
-    var pictureElement = target.closest('.picture');
-
-    if (!pictureElement) {
-      return;
-    }
-
-    var imageElement = pictureElement.querySelector('.picture__img');
-    var imageSrc = imageElement.getAttribute('src');
-    var imageData = getPictureData(imageSrc);
-
-    window.picture.showBigPicture(imageData);
-  };
-
-  var getPictureData = function (imageSrc) {
-    var pictureIndex = pictures.map(function (picture) {
-      return picture.url;
-    }).indexOf(imageSrc);
-
-    return pictures[pictureIndex];
+  var saveWebData = function (webData) {
+    webData.forEach(function (item, index) {
+      pictures[index] = item;
+    });
   };
 
   var setSortingButtonsBehavior = function () {
     var sortingButtons = document.querySelectorAll('.img-filters__button');
     var sortingActiveAttribute = 'img-filters__button--active';
-
-    var sortTypes = {
-      'filter-popular': pictures,
-      'filter-new': getImagesForSortingNew(),
-      'filter-discussed': getImagesForSortingDiscussed(),
-    };
 
     sortingButtons.forEach(function (button) {
       button.addEventListener('click', function (evt) {
@@ -92,9 +79,13 @@
         });
         evt.target.classList.add(sortingActiveAttribute);
 
-        sortAndRenderImages(sortTypes[evt.target.id]);
+        sortAndRenderImages(mapClassWithData[evt.target.id]);
       });
     });
+  };
+
+  var getDefaultImages = function () {
+    return pictures.slice();
   };
 
   var getImagesForSortingNew = function () {
@@ -116,6 +107,11 @@
   });
 
 
-  window.backend.load(successHandler, errorHandler);
+  window.backend.load(successHandler, errorHandler, window.backend.TIMEOUT, window.backend.STATUS, window.backend.DATA_URL);
+  var mapClassWithData = {
+    'filter-popular': getDefaultImages(),
+    'filter-new': getImagesForSortingNew(),
+    'filter-discussed': getImagesForSortingDiscussed()
+  };
 
 })();

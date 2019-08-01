@@ -6,7 +6,8 @@
   var bigPictureForm = document.querySelector('.big-picture');
   var commentsLoaderButton = bigPictureForm.querySelector('.comments-loader');
   var commentsList = document.querySelector('.social__comments');
-  var comments = null;
+  var bigPictureCommentInput = document.querySelector('.social__footer-text');
+  var Comments = [];
   var commentLoaderElement = bigPictureForm.querySelector('.comments-loader');
   var commentIndex = 0;
   var commentsCounterElement = bigPictureForm.querySelector('.comments-count');
@@ -18,8 +19,11 @@
     displayBigPicture(data);
     window.utils.showHiddenBlock(bigPictureForm);
     commentsLoaderButton.addEventListener('click', onLoaderCommentsClick);
-    bigPictureCloseElement.addEventListener('click', onBigPictureCloseElementClick);
-    document.addEventListener('keydown', onFormEscPress);
+    bigPictureCloseElement.addEventListener('click', onBigPictureClose);
+
+    document.addEventListener('keydown', function (evt) {
+      window.utils.invokeIfEscEvent(evt, onBigPictureClose);
+    });
   };
 
   var displayBigPicture = function (dataPhoto) {
@@ -28,11 +32,12 @@
     var likesCounterElement = bigPictureForm.querySelector('.likes-count');
     var bigPictureDescription = bigPictureForm.querySelector('.social__caption');
 
-    comments = dataPhoto.comments;
-
-    var firstLoadCommentList = getCommentListFragment(comments);
+    Comments = dataPhoto.comments;
+    resetIndex();
+    var firstLoadCommentList = getCommentListFragment(Comments);
     clearCommentsList();
     commentsList.appendChild(firstLoadCommentList);
+
     bigPictureImgElement.src = dataPhoto.url;
     likesCounterElement.textContent = dataPhoto.likes;
     commentsCounterElement.textContent = dataPhoto.comments.length;
@@ -48,20 +53,16 @@
   };
 
   var onLoaderCommentsClick = function () {
-    var fragmentCommentList = getCommentListFragment(comments);
+    var fragmentCommentList = getCommentListFragment(Comments);
     commentsList.appendChild(fragmentCommentList);
   };
 
-  var onBigPictureCloseElementClick = function () {
+  var onBigPictureClose = function () {
     bigPictureForm.classList.add('hidden');
     resetIndex();
+    bigPictureCommentInput.value = '';
     commentsLoaderButton.removeEventListener('click', onLoaderCommentsClick);
-    document.removeEventListener('click', onBigPictureCloseElementClick);
-  };
-
-  var onFormEscPress = function (evt) {
-    window.utils.isEscEvent(evt, onBigPictureCloseElementClick);
-    document.removeEventListener('keydown', onFormEscPress);
+    document.removeEventListener('click', onBigPictureClose);
   };
 
   var getCommentListFragment = function (commentsFragment) {

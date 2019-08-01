@@ -2,37 +2,26 @@
 
 (function () {
   var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
+  var MAX_COMMENTS_LENGTH = 140;
 
   var imageEditorOverlay = document.querySelector('.img-upload__overlay');
   var imageEditorForm = document.querySelector('.img-upload__form');
   var mainContainer = document.querySelector('main');
   var imageUploadForm = document.querySelector('.img-upload__form');
   var uploadFileInput = imageUploadForm.querySelector('#upload-file');
-  var hashTagsInput = imageUploadForm.querySelector('.text__hashtags');
-  var commentsInput = imageUploadForm.querySelector('.text__description');
   var imageEditorCloseElement = imageUploadForm.querySelector('.img-upload__cancel');
-  var commentInputFocusStatus = false;
-  var tagInputFocusStatus = false;
 
 
   var onEditFormCloseElementClick = function () {
-    imageEditorOverlay.classList.add('hidden');
-    imageUploadForm.reset();
-    document.removeEventListener('click', onEditFormCloseElementClick);
+    closeImageEditForm();
   };
 
   var onEditFormEscPress = function (evt) {
-    var closingKeyCode = window.utils.ESC_KEY_CODE;
-    if (evt.keyCode === closingKeyCode && !commentInputFocusStatus && !tagInputFocusStatus) {
-      imageEditorOverlay.classList.add('hidden');
-      imageUploadForm.reset();
-      document.removeEventListener('keydown', onEditFormEscPress);
-    }
-    return;
+    window.utils.invokeIfEscEvent(evt, closeImageEditForm);
   };
 
   var addValidationHashTags = function () {
-    var hashTags = hashTagsInput.value
+    var hashTags = window.utils.hashTagsInput.value
       .split(' ')
       .map(function (hashTag) {
         return hashTag.toLowerCase();
@@ -41,7 +30,7 @@
 
     if (hashTags.length === 0) {
       message = '';
-    } else if (hashTags.length === 5) {
+    } else if (hashTags.length > 5) {
       message = 'Нельзя указать больше пяти хэш-тегов';
     } else {
       hashTags.forEach(function (tag, index) {
@@ -52,7 +41,7 @@
       });
     }
 
-    hashTagsInput.setCustomValidity(message);
+    window.utils.hashTagsInput.setCustomValidity(message);
   };
 
   var getValidationHashTagsErrorMessage = function (hashTags, i) {
@@ -73,12 +62,12 @@
     return message;
   };
 
-  var addValidationComments = function () {
+  var addValidationComments = function (maxLength) {
     var message = '';
-    if (commentsInput.value.length > 140) {
+    if (window.utils.commentsInput.value.length > maxLength) {
       message = 'Максимальная длина комментария 140 символов';
     }
-    return commentsInput.setCustomValidity(message);
+    return window.utils.commentsInput.setCustomValidity(message);
   };
 
   var onSuccess = function () {
@@ -94,6 +83,7 @@
   var closeImageEditForm = function () {
     imageEditorOverlay.classList.add('hidden');
     document.removeEventListener('keydown', onEditFormEscPress);
+    imageUploadForm.reset();
   };
 
   var showUploadStatusMessage = function (classNameMessage) {
@@ -126,7 +116,7 @@
   };
 
   var onSuccessMessageEscPress = function (evt) {
-    window.utils.isEscEvent(evt, removeWindowSuccessUpload);
+    window.utils.invokeIfEscEvent(evt, removeWindowSuccessUpload);
   };
 
   var onError = function () {
@@ -146,11 +136,12 @@
     retryButton.addEventListener('click', function () {
       window.utils.showHiddenBlock(imageEditorOverlay);
       errorOverlay.remove();
+      document.removeEventListener('keydown', onErrorMessageEscPress);
     });
   };
 
   var onErrorMessageEscPress = function (evt) {
-    window.utils.isEscEvent(evt, removeWindowErrorUpload);
+    window.utils.invokeIfEscEvent(evt, removeWindowErrorUpload);
     imageEditorForm.reset();
   };
 
@@ -178,8 +169,8 @@
     var file = uploadFileInput.files[0];
 
 
-    var fileFormatMatches = FILE_TYPES.some(function (it) {
-      return fileName.endsWith(it);
+    var fileFormatMatches = FILE_TYPES.some(function (fileType) {
+      return fileName.endsWith(fileType);
     });
 
     if (!fileFormatMatches) {
@@ -202,41 +193,18 @@
     return true;
   });
 
-  hashTagsInput.addEventListener('focus', function () {
-    tagInputFocusStatus = true;
-  });
-
-  hashTagsInput.addEventListener('focusout', function () {
-    tagInputFocusStatus = false;
-  });
-
-  hashTagsInput.addEventListener('input', function () {
+  window.utils.hashTagsInput.addEventListener('change', function () {
     addValidationHashTags();
   });
 
-  commentsInput.addEventListener('focus', function () {
-    commentInputFocusStatus = true;
-  });
-
-  commentsInput.addEventListener('focusout', function () {
-    commentInputFocusStatus = false;
-  });
-
-  commentsInput.addEventListener('input', function () {
-    addValidationComments();
+  window.utils.commentsInput.addEventListener('change', function () {
+    addValidationComments(MAX_COMMENTS_LENGTH);
   });
 
   imageUploadForm.addEventListener('submit', function (evt) {
     evt.preventDefault();
     var data = new FormData(imageUploadForm);
-    window.backend.save(data, onSuccess, onError);
+    window.backend.save(data, onSuccess, onError, window.backend.TIMEOUT, window.backend.STATUS, window.backend.SAVE_URL);
   });
-
-
-  window.form = {
-    commentsInput: commentsInput,
-    hashTagsInput: hashTagsInput,
-    imageEditorForm: imageEditorForm,
-  };
 
 })();
