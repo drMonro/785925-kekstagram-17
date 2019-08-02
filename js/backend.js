@@ -5,16 +5,16 @@
   var STATUS = 200;
   var DATA_URL = 'https://js.dump.academy/kekstagram/data';
   var SAVE_URL = 'https://js.dump.academy/kekstagram';
-  var mainTag = document.getElementsByTagName('main')[0];
+
   var popup = document.querySelector('#messages').content.querySelector('.img-upload__message').cloneNode(true);
 
 
   function load(onLoad, onError, timeout, status, url) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
-    mainTag.appendChild(popup);
+    window.utils.mainContainer.appendChild(popup);
     xhr.addEventListener('load', function () {
-      mainTag.removeChild(popup);
+      window.utils.mainContainer.removeChild(popup);
       if (xhr.status === status) {
         onLoad(xhr.response);
       } else {

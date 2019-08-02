@@ -3,10 +3,7 @@
 (function () {
   var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
   var MAX_COMMENTS_LENGTH = 140;
-
   var imageEditorOverlay = document.querySelector('.img-upload__overlay');
-  var imageEditorForm = document.querySelector('.img-upload__form');
-  var mainContainer = document.querySelector('main');
   var imageUploadForm = document.querySelector('.img-upload__form');
   var uploadFileInput = imageUploadForm.querySelector('#upload-file');
   var imageEditorCloseElement = imageUploadForm.querySelector('.img-upload__cancel');
@@ -72,10 +69,10 @@
 
   var onSuccess = function () {
     closeImageEditForm();
-    imageEditorForm.reset();
+    imageUploadForm.reset();
     showUploadStatusMessage('success');
     var successButton = document.querySelector('.success__button');
-    mainContainer.addEventListener('click', onSuccessWindowOutsideCLick);
+    window.utils.mainContainer.addEventListener('click', onSuccessWindowOutsideCLick);
     successButton.addEventListener('click', removeWindowSuccessUpload);
     document.addEventListener('keydown', onSuccessMessageEscPress);
   };
@@ -90,7 +87,7 @@
     var messageTemplate = document.querySelector('#' + classNameMessage)
       .content.querySelector('.' + classNameMessage)
       .cloneNode(true);
-    mainContainer.appendChild(messageTemplate);
+    window.utils.mainContainer.appendChild(messageTemplate);
   };
   var isClickOutside = function (evt, cssSelector) {
     var target = evt.target;
@@ -103,7 +100,7 @@
     if (isClickOutside(evt, '.success__inner')) {
       removeWindowSuccessUpload();
     }
-    mainContainer.removeEventListener('click', onSuccessWindowOutsideCLick);
+    window.utils.mainContainer.removeEventListener('click', onSuccessWindowOutsideCLick);
   };
 
   var removeWindowSuccessUpload = function () {
@@ -111,7 +108,7 @@
 
     successMessage.remove();
 
-    mainContainer.removeEventListener('click', onSuccessWindowOutsideCLick);
+    window.utils.mainContainer.removeEventListener('click', onSuccessWindowOutsideCLick);
     document.removeEventListener('keydown', onSuccessMessageEscPress);
   };
 
@@ -127,11 +124,11 @@
     var retryButton = errorButtons.querySelector('.error__button:first-child');
     var errorOverlay = document.querySelector('.error');
 
-    mainContainer.addEventListener('click', onErrorWindowOutsideCLick);
+    window.utils.mainContainer.addEventListener('click', onErrorWindowOutsideCLick);
     document.addEventListener('keydown', onErrorMessageEscPress);
     cancelButton.addEventListener('click', function () {
       errorOverlay.remove();
-      imageEditorForm.reset();
+      imageUploadForm.reset();
     });
     retryButton.addEventListener('click', function () {
       window.utils.showHiddenBlock(imageEditorOverlay);
@@ -142,24 +139,24 @@
 
   var onErrorMessageEscPress = function (evt) {
     window.utils.invokeIfEscEvent(evt, removeWindowErrorUpload);
-    imageEditorForm.reset();
+    imageUploadForm.reset();
   };
 
   var onErrorWindowOutsideCLick = function (evt) {
     if (isClickOutside(evt, '.error__inner')) {
       removeWindowErrorUpload();
-      imageEditorForm.reset();
-      mainContainer.removeEventListener('click', onErrorWindowOutsideCLick);
+      imageUploadForm.reset();
+      window.utils.mainContainer.removeEventListener('click', onErrorWindowOutsideCLick);
     }
 
-    mainContainer.removeEventListener('click', onErrorWindowOutsideCLick);
+    window.utils.mainContainer.removeEventListener('click', onErrorWindowOutsideCLick);
   };
 
   var removeWindowErrorUpload = function () {
     var errorMessage = document.querySelector('.error');
 
     errorMessage.remove();
-    mainContainer.removeEventListener('click', onErrorWindowOutsideCLick);
+    window.utils.mainContainer.removeEventListener('click', onErrorWindowOutsideCLick);
     document.removeEventListener('keydown', onSuccessMessageEscPress);
   };
 

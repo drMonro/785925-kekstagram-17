@@ -7,7 +7,7 @@
   var tagInputFocusStatus = false;
   var hashTagsInput = document.querySelector('.text__hashtags');
   var commentsInput = document.querySelector('.text__description');
-
+  var mainContainer = document.querySelector('main');
 
   var showHiddenBlock = function (block) {
     block.classList.remove('hidden');
@@ -41,6 +41,7 @@
     showHiddenBlock: showHiddenBlock,
     invokeIfEscEvent: invokeIfEscEvent,
     hashTagsInput: hashTagsInput,
+    mainContainer: mainContainer,
     commentsInput: commentsInput
   };
 })();

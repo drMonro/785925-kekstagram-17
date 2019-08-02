@@ -1,8 +1,9 @@
 'use strict';
 
 (function () {
-  var pictures = [];
+  var Pictures = [];
   var picturesSection = document.querySelector('.pictures');
+  var sortingButtons = document.querySelectorAll('.img-filters__button');
 
 
   var renderImages = function (images) {
@@ -56,7 +57,7 @@
     });
 
     saveWebData(webData);
-    renderImages(pictures);
+    renderImages(Pictures);
 
     filters.classList.remove('img-filters--inactive');
     setSortingButtonsBehavior();
@@ -64,32 +65,35 @@
 
   var saveWebData = function (webData) {
     webData.forEach(function (item, index) {
-      pictures[index] = item;
+      Pictures[index] = item;
     });
   };
 
   var setSortingButtonsBehavior = function () {
-    var sortingButtons = document.querySelectorAll('.img-filters__button');
-    var sortingActiveAttribute = 'img-filters__button--active';
+
 
     sortingButtons.forEach(function (button) {
-      button.addEventListener('click', function (evt) {
-        sortingButtons.forEach(function (btn) {
-          btn.classList.remove(sortingActiveAttribute);
-        });
-        evt.target.classList.add(sortingActiveAttribute);
-
-        sortAndRenderImages(mapClassWithData[evt.target.id]);
-      });
+      button.addEventListener('click', onFilterButtonsClick);
     });
   };
 
+
+  var onFilterButtonsClick = function (evt) {
+    var sortingActiveAttribute = 'img-filters__button--active';
+    sortingButtons.forEach(function (btn) {
+      btn.classList.remove(sortingActiveAttribute);
+    });
+    evt.target.classList.add(sortingActiveAttribute);
+
+    sortAndRenderImages(mapClassWithData[evt.target.id]());
+  };
+
   var getDefaultImages = function () {
-    return pictures.slice();
+    return Pictures.slice();
   };
 
   var getImagesForSortingNew = function () {
-    return pictures.slice().sort(compareRandom).slice(0, 9);
+    return Pictures.slice().sort(compareRandom).slice(0, 9);
   };
 
   var compareRandom = function () {
@@ -97,7 +101,7 @@
   };
 
   var getImagesForSortingDiscussed = function () {
-    return pictures.slice().sort(function (value1, value2) {
+    return Pictures.slice().sort(function (value1, value2) {
       return value2.comments.length - value1.comments.length;
     });
   };
@@ -108,10 +112,11 @@
 
 
   window.backend.load(successHandler, errorHandler, window.backend.TIMEOUT, window.backend.STATUS, window.backend.DATA_URL);
+
   var mapClassWithData = {
-    'filter-popular': getDefaultImages(),
-    'filter-new': getImagesForSortingNew(),
-    'filter-discussed': getImagesForSortingDiscussed()
+    'filter-popular': getDefaultImages,
+    'filter-new': getImagesForSortingNew,
+    'filter-discussed': getImagesForSortingDiscussed
   };
 
 })();
