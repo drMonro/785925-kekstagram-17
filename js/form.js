@@ -3,6 +3,7 @@
 (function () {
   var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
   var MAX_COMMENTS_LENGTH = 140;
+  var MAX_COMMENTS_COUNT = 5;
 
   var imageEditorOverlay = document.querySelector('.img-upload__overlay');
   var imageUploadForm = document.querySelector('.img-upload__form');
@@ -29,7 +30,7 @@
 
     if (hashTags.length === 0) {
       message = '';
-    } else if (hashTags.length > 5) {
+    } else if (hashTags.length > MAX_COMMENTS_COUNT) {
       message = 'Нельзя указать больше пяти хэш-тегов';
     } else {
       hashTags.forEach(function (tag, index) {
@@ -43,11 +44,11 @@
   };
 
   var getValidationHashTagsErrorMessage = function (hashTags, i) {
-    var UniqueHashTags = [];
+    var uniqueHashTags = [];
     var message = '';
 
-    if (UniqueHashTags.indexOf(hashTags[i]) === -1) {
-      UniqueHashTags.push(hashTags[i]);
+    if (uniqueHashTags.indexOf(hashTags[i]) === -1) {
+      uniqueHashTags.push(hashTags[i]);
     }
 
     if (hashTags[i].charAt(0) === '') {
@@ -58,7 +59,7 @@
       message = 'Хеш-теги должны состоять хотя бы из одного символа';
     } else if (hashTags[i].indexOf('#', 1) > 0) {
       message = 'Хеш-теги должны разделяться пробелами';
-    } else if (UniqueHashTags[i] !== hashTags[i]) {
+    } else if (uniqueHashTags[i] !== hashTags[i]) {
       message = 'Один и тот же хэш-тег не может быть использован дважды';
     } else if (hashTags[i].length > 20) {
       message = 'Максимальная длина одного хэш-тега 20 символов';

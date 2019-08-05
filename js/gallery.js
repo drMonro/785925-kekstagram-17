@@ -36,7 +36,7 @@
     return pictureElement;
   };
 
-  var errorHandler = function (errorMessage) {
+  var onError = function (errorMessage) {
     var errorBlock = document.createElement('div');
     errorBlock.classList = 'errorMessage';
     errorBlock.style = 'z-index: 100; margin: 0 auto; text-align: center; background-color: red;';
@@ -50,7 +50,7 @@
     document.body.insertAdjacentElement('afterbegin', errorBlock);
   };
 
-  var successHandler = function (webData) {
+  var onSuccess = function (webData) {
     var filters = document.querySelector('.img-filters');
     var errorMessages = document.querySelectorAll('.errorMessage');
 
@@ -110,7 +110,7 @@
   });
 
 
-  window.backend.load(successHandler, errorHandler);
+  window.backend.load(onSuccess, onError);
 
   var MapClassWithData = {
     'filter-popular': getDefaultImages,
