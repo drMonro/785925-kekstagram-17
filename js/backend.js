@@ -19,12 +19,16 @@
   var createRequest = function (method, url, onSuccess, onError, data) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
+
     if (method === 'GET') {
       window.utils.showLoadingPopup();
     }
+
     xhr.addEventListener('load', function () {
-      if (xhr.status === SUCCESS_STATUS) {
+      if (method === 'GET') {
         window.utils.hideLoadingPopup();
+      }
+      if (xhr.status === SUCCESS_STATUS) {
         onSuccess(xhr.response);
       } else {
         onError('Статус ответа: ' + xhr.status + ' ' + xhr.statusText);

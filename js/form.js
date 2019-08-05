@@ -76,7 +76,7 @@
 
   var onSuccess = function () {
     closeImageEditForm();
-    imageUploadForm.reset();
+    // imageUploadForm.reset();
     showUploadStatusMessage('success');
     var successButton = document.querySelector('.success__button');
     window.utils.mainContainer.addEventListener('click', onSuccessWindowOutsideCLick);
