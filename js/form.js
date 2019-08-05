@@ -76,7 +76,6 @@
 
   var onSuccess = function () {
     closeImageEditForm();
-    // imageUploadForm.reset();
     showUploadStatusMessage('success');
     var successButton = document.querySelector('.success__button');
     window.utils.mainContainer.addEventListener('click', onSuccessWindowOutsideCLick);
@@ -110,6 +109,7 @@
   };
 
   var onSuccessButtonClick = function () {
+    imageUploadForm.reset();
     var successMessage = document.querySelector('.success');
     successMessage.remove();
     window.utils.mainContainer.removeEventListener('click', onSuccessWindowOutsideCLick);
@@ -203,7 +203,7 @@
   imageUploadForm.addEventListener('submit', function (evt) {
     evt.preventDefault();
     var data = new FormData(imageUploadForm);
-    window.backend.save(data, onSuccess, onError, window.backend.SAVE_URL);
+    window.backend.save(data, onSuccess, onError);
   });
 
 })();

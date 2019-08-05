@@ -110,7 +110,7 @@
   });
 
 
-  window.backend.load(successHandler, errorHandler, window.backend.DATA_URL);
+  window.backend.load(successHandler, errorHandler);
 
   var MapClassWithData = {
     'filter-popular': getDefaultImages,
