@@ -19,7 +19,9 @@
   var createRequest = function (method, url, onSuccess, onError, data) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
-    window.utils.showLoadingPopup();
+    if (method === 'GET') {
+      window.utils.showLoadingPopup();
+    }
     xhr.addEventListener('load', function () {
       if (xhr.status === SUCCESS_STATUS) {
         window.utils.hideLoadingPopup();
@@ -31,7 +33,9 @@
 
     xhr.addEventListener('error', function () {
       onError('Попытка возобновить соединениe');
-      load(onSuccess, onError, url);
+      if (method === 'GET') {
+        load(onSuccess, onError, url);
+      }
     });
     xhr.addEventListener('timeout', function () {
       onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');

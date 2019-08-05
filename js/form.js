@@ -12,10 +12,11 @@
 
   var onEditFormCloseElementClick = function () {
     closeImageEditForm();
+    imageUploadForm.reset();
   };
 
   var onEditFormEscPress = function (evt) {
-    window.utils.invokeIfEscEvent(evt, closeImageEditForm);
+    window.utils.invokeIfEscEvent(evt, onEditFormCloseElementClick);
   };
 
   var addValidationHashTags = function () {
@@ -86,7 +87,6 @@
   var closeImageEditForm = function () {
     imageEditorOverlay.classList.add('hidden');
     document.removeEventListener('keydown', onEditFormEscPress);
-    imageUploadForm.reset();
   };
 
   var showUploadStatusMessage = function (classNameMessage) {
@@ -95,6 +95,7 @@
       .cloneNode(true);
     window.utils.mainContainer.appendChild(messageTemplate);
   };
+
   var isClickOutside = function (evt, cssSelector) {
     var target = evt.target;
     var element = target.closest(cssSelector);
