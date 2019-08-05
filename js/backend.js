@@ -6,14 +6,16 @@
   var DATA_URL = 'https://js.dump.academy/kekstagram/data';
   var SAVE_URL = 'https://js.dump.academy/kekstagram';
   var DEBOUNCE_INTERVAL = 500;
+  var GET_METHOD = 'GET';
+  var POST_METHOD = 'GET';
 
 
   var load = function (onSuccess, onError, url) {
-    createRequest('GET', url, onSuccess, onError);
+    createRequest(GET_METHOD, url, onSuccess, onError);
   };
 
   var save = function (data, onSuccess, onError, url) {
-    createRequest('POST', url, onSuccess, onError, data);
+    createRequest(POST_METHOD, url, onSuccess, onError, data);
   };
 
   var createRequest = function (method, url, onSuccess, onError, data) {
