@@ -3,6 +3,7 @@
 (function () {
   var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
   var MAX_COMMENTS_LENGTH = 140;
+
   var imageEditorOverlay = document.querySelector('.img-upload__overlay');
   var imageUploadForm = document.querySelector('.img-upload__form');
   var uploadFileInput = imageUploadForm.querySelector('#upload-file');
@@ -37,12 +38,17 @@
         }
       });
     }
-
     window.utils.hashTagsInput.setCustomValidity(message);
   };
 
   var getValidationHashTagsErrorMessage = function (hashTags, i) {
+    var UniqueHashTags = [];
     var message = '';
+
+    if (UniqueHashTags.indexOf(hashTags[i]) === -1) {
+      UniqueHashTags.push(hashTags[i]);
+    }
+
     if (hashTags[i].charAt(0) === '') {
       message = '';
     } else if (hashTags[i].charAt(0) !== '#') {
@@ -51,7 +57,7 @@
       message = 'Хеш-теги должны состоять хотя бы из одного символа';
     } else if (hashTags[i].indexOf('#', 1) > 0) {
       message = 'Хеш-теги должны разделяться пробелами';
-    } else if (hashTags.indexOf(hashTags[i], i + 1) > 0) {
+    } else if (UniqueHashTags[i] !== hashTags[i]) {
       message = 'Один и тот же хэш-тег не может быть использован дважды';
     } else if (hashTags[i].length > 20) {
       message = 'Максимальная длина одного хэш-тега 20 символов';
@@ -73,7 +79,7 @@
     showUploadStatusMessage('success');
     var successButton = document.querySelector('.success__button');
     window.utils.mainContainer.addEventListener('click', onSuccessWindowOutsideCLick);
-    successButton.addEventListener('click', removeWindowSuccessUpload);
+    successButton.addEventListener('click', onSuccessButtonClick);
     document.addEventListener('keydown', onSuccessMessageEscPress);
   };
 
@@ -92,28 +98,25 @@
   var isClickOutside = function (evt, cssSelector) {
     var target = evt.target;
     var element = target.closest(cssSelector);
-
     return !element;
   };
 
   var onSuccessWindowOutsideCLick = function (evt) {
     if (isClickOutside(evt, '.success__inner')) {
-      removeWindowSuccessUpload();
+      onSuccessButtonClick();
     }
     window.utils.mainContainer.removeEventListener('click', onSuccessWindowOutsideCLick);
   };
 
-  var removeWindowSuccessUpload = function () {
+  var onSuccessButtonClick = function () {
     var successMessage = document.querySelector('.success');
-
     successMessage.remove();
-
     window.utils.mainContainer.removeEventListener('click', onSuccessWindowOutsideCLick);
     document.removeEventListener('keydown', onSuccessMessageEscPress);
   };
 
   var onSuccessMessageEscPress = function (evt) {
-    window.utils.invokeIfEscEvent(evt, removeWindowSuccessUpload);
+    window.utils.invokeIfEscEvent(evt, onSuccessButtonClick);
   };
 
   var onError = function () {
@@ -172,15 +175,13 @@
 
     if (!fileFormatMatches) {
       return false;
-    } else {
-      var reader = new FileReader();
-
-      reader.addEventListener('load', function () {
-        window.preview.imgPreviewElement.src = reader.result;
-      });
-
-      reader.readAsDataURL(file);
     }
+
+    var reader = new FileReader();
+    reader.addEventListener('load', function () {
+      window.preview.imageElement.src = reader.result;
+    });
+    reader.readAsDataURL(file);
 
     window.preview.resetFilters();
     window.utils.showHiddenBlock(imageEditorOverlay);
@@ -201,7 +202,7 @@
   imageUploadForm.addEventListener('submit', function (evt) {
     evt.preventDefault();
     var data = new FormData(imageUploadForm);
-    window.backend.save(data, onSuccess, onError, window.backend.TIMEOUT, window.backend.STATUS, window.backend.SAVE_URL);
+    window.backend.save(data, onSuccess, onError, window.backend.SAVE_URL);
   });
 
 })();

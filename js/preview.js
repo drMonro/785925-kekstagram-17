@@ -4,6 +4,8 @@
   var MIN_SCALE = 25;
   var MAX_SCALE = 100;
   var SCALE_STEP = 25;
+  var DEFAULT_VALUE = 100;
+
   var FilterEffect = {
     NONE: '',
     CHROME: 'effects__preview--chrome',
@@ -13,35 +15,35 @@
     HEAT: 'effects__preview--heat',
   };
   var FilerStyle = {
-    none: '',
-    chrome: {
-      name: 'grayscale',
-      max: 1,
-      type: '',
+    NONE: '',
+    CHROME: {
+      NAME: 'grayscale',
+      MAX: 1,
+      TYPE: '',
     },
-    sepia: {
-      name: 'sepia',
-      max: 1,
-      type: '',
+    SEPIA: {
+      NAME: 'sepia',
+      MAX: 1,
+      TYPE: '',
     },
-    marvin: {
-      name: 'invert',
-      max: 100,
-      type: '%',
+    MARVIN: {
+      NAME: 'invert',
+      MAX: 100,
+      TYPE: '%',
     },
-    phobos: {
-      name: 'blur',
-      max: 3,
-      type: 'px',
+    PHOBOS: {
+      NAME: 'blur',
+      MAX: 3,
+      TYPE: 'px',
     },
-    heat: {
-      name: 'brightness',
-      max: 3,
-      type: '',
-    }
+    HEAT: {
+      NAME: 'brightness',
+      MAX: 3,
+      TYPE: '',
+    },
   };
   var imageBlock = document.querySelector('.img-upload__preview');
-  var imgPreviewElement = imageBlock.querySelector('img');
+  var imageElement = imageBlock.querySelector('img');
   var imagePreview = imageBlock.children[0];
   var scaleDownButton = document.querySelector('.scale__control--smaller');
   var scaleUpButton = document.querySelector('.scale__control--bigger');
@@ -50,7 +52,6 @@
   var depthEffectLine = document.querySelector('.effect-level__depth');
   var effectLevelValue = document.querySelector('.effect-level__value');
   var filtersRadioElements = document.querySelectorAll('.effects__radio');
-  var DEFAULT_VALUE = 100;
   var currentScaleValue = DEFAULT_VALUE;
   var currentEffectLevel = DEFAULT_VALUE;
   var selectedFilter = null;
@@ -92,9 +93,9 @@
 
   var renderFilteredImage = function (chosenFilter) {
     if (FilerStyle[chosenFilter]) {
-      var name = FilerStyle[chosenFilter].name;
-      var value = FilerStyle[chosenFilter].max / 100 * currentEffectLevel;
-      var type = FilerStyle[chosenFilter].type;
+      var name = FilerStyle[chosenFilter].NAME;
+      var value = FilerStyle[chosenFilter].MAX / 100 * currentEffectLevel;
+      var type = FilerStyle[chosenFilter].TYPE;
       imagePreview.style.filter = name + '(' + value + type + ')';
     } else {
       imagePreview.style.filter = '';
@@ -126,7 +127,7 @@
   };
 
   var chooseFilter = function (filter) {
-    selectedFilter = filter.value;
+    selectedFilter = filter.value.toUpperCase();
 
     if (selectedFilter === 'none') {
       resetFilters();
@@ -192,22 +193,8 @@
     }
   });
 
-  scaleDownButton.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === window.form.SPACE_BAR_KEY_CODE && currentScaleValue > MIN_SCALE) {
-      imageZoomOut(currentScaleValue, SCALE_STEP);
-      currentScaleValue -= SCALE_STEP;
-    }
-  });
-
   scaleUpButton.addEventListener('click', function () {
     if (currentScaleValue < MAX_SCALE) {
-      imageZoomIn(currentScaleValue, SCALE_STEP);
-      currentScaleValue += SCALE_STEP;
-    }
-  });
-
-  scaleUpButton.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === window.form.SPACE_BAR_KEY_CODE && currentScaleValue < MAX_SCALE) {
       imageZoomIn(currentScaleValue, SCALE_STEP);
       currentScaleValue += SCALE_STEP;
     }
@@ -219,8 +206,8 @@
 
 
   window.preview = {
-    resetFilters: resetFilters,
-    imgPreviewElement: imgPreviewElement
+    imageElement: imageElement,
+    resetFilters: resetFilters
   };
 
 })();

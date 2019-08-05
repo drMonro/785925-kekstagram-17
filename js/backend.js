@@ -2,68 +2,66 @@
 
 (function () {
   var TIMEOUT = 10000;
-  var STATUS = 200;
+  var SUCCESS_STATUS = 200;
   var DATA_URL = 'https://js.dump.academy/kekstagram/data';
   var SAVE_URL = 'https://js.dump.academy/kekstagram';
+  var DEBOUNCE_INTERVAL = 500;
 
-  var popup = document.querySelector('#messages').content.querySelector('.img-upload__message').cloneNode(true);
 
+  var load = function (onSuccess, onError, url) {
+    createRequest('GET', url, onSuccess, onError);
+  };
 
-  function load(onLoad, onError, timeout, status, url) {
+  var save = function (data, onSuccess, onError, url) {
+    createRequest('POST', url, onSuccess, onError, data);
+  };
+
+  var createRequest = function (method, url, onSuccess, onError, data) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
-    window.utils.mainContainer.appendChild(popup);
+    window.utils.showLoadingPopup();
     xhr.addEventListener('load', function () {
-      window.utils.mainContainer.removeChild(popup);
-      if (xhr.status === status) {
-        onLoad(xhr.response);
+      if (xhr.status === SUCCESS_STATUS) {
+        window.utils.hideLoadingPopup();
+        onSuccess(xhr.response);
       } else {
-        onError('Данные не загрузились. Причина: ' + xhr.status + ' ' + xhr.statusText);
+        onError('Статус ответа: ' + xhr.status + ' ' + xhr.statusText);
       }
     });
 
     xhr.addEventListener('error', function () {
-      onError('Попытка возобновить соеденениe');
-      load(onLoad, onError, timeout, status, url);
+      onError('Попытка возобновить соединениe');
+      load(onSuccess, onError, url);
     });
     xhr.addEventListener('timeout', function () {
       onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
     });
-    xhr.timeout = timeout;
-
-    xhr.open('GET', url);
-    xhr.send();
-  }
-
-  function save(data, onLoad, onError, timeout, status, url) {
-    var xhr = new XMLHttpRequest();
-    xhr.responseType = 'json';
-    xhr.timeout = timeout;
-
-    xhr.addEventListener('load', function () {
-      if (xhr.status === status) {
-        onLoad();
-      } else {
-        onError('Данные не сохранились. Причина: ' + xhr.status + ' ' + xhr.statusText);
-      }
-    });
-
-    xhr.addEventListener('error', function () {
-      onError('Произошла ошибка соединения');
-    });
-    xhr.addEventListener('timeout', function () {
-      onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
-    });
-    xhr.open('POST', url);
+    xhr.timeout = TIMEOUT;
+    xhr.open(method, url);
     xhr.send(data);
-  }
+  };
+
+  var debounce = function (cb) {
+    var lastTimeout = null;
+    var interval = DEBOUNCE_INTERVAL;
+    return function () {
+      var parameters = arguments;
+      if (lastTimeout) {
+        window.clearTimeout(lastTimeout);
+      }
+      lastTimeout = window.setTimeout(function () {
+        cb.apply(null, parameters);
+      }, interval);
+    };
+  };
+
 
   window.backend = {
     load: load,
     save: save,
-    TIMEOUT: TIMEOUT,
-    STATUS: STATUS,
+    debounce: debounce,
     DATA_URL: DATA_URL,
-    SAVE_URL: SAVE_URL,
+    SAVE_URL: SAVE_URL
   };
 })();
+

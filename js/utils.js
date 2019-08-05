@@ -3,11 +3,14 @@
 (function () {
   var ESC_KEY_CODE = 27;
   var SPACE_BAR_KEY_CODE = 32;
+
   var commentInputFocusStatus = false;
   var tagInputFocusStatus = false;
   var hashTagsInput = document.querySelector('.text__hashtags');
   var commentsInput = document.querySelector('.text__description');
   var mainContainer = document.querySelector('main');
+  var loadingPopup = document.querySelector('#messages').content.querySelector('.img-upload__message').cloneNode(true);
+
 
   var showHiddenBlock = function (block) {
     block.classList.remove('hidden');
@@ -18,6 +21,15 @@
       action();
     }
   };
+
+  var showLoadingPopup = function () {
+    mainContainer.appendChild(loadingPopup);
+  };
+
+  var hideLoadingPopup = function () {
+    mainContainer.removeChild(loadingPopup);
+  };
+
 
   hashTagsInput.addEventListener('focus', function () {
     tagInputFocusStatus = true;
@@ -35,13 +47,16 @@
     commentInputFocusStatus = false;
   });
 
+
   window.utils = {
     SPACE_BAR_KEY_CODE: SPACE_BAR_KEY_CODE,
     ESC_KEY_CODE: ESC_KEY_CODE,
     showHiddenBlock: showHiddenBlock,
     invokeIfEscEvent: invokeIfEscEvent,
+    showLoadingPopup: showLoadingPopup,
+    hideLoadingPopup: hideLoadingPopup,
     hashTagsInput: hashTagsInput,
     mainContainer: mainContainer,
-    commentsInput: commentsInput
+    commentsInput: commentsInput,
   };
 })();

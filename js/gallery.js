@@ -1,7 +1,9 @@
 'use strict';
 
 (function () {
-  var Pictures = [];
+  var COUNT_OF_NEW_PICTURES = 10;
+
+  var pictures = [];
   var picturesSection = document.querySelector('.pictures');
   var sortingButtons = document.querySelectorAll('.img-filters__button');
 
@@ -29,7 +31,7 @@
     pictureElement.querySelector('.picture__comments').textContent = picture.comments.length;
     pictureElement.querySelector('.picture__likes').textContent = picture.likes;
     pictureElement.addEventListener('click', function () {
-      window.picture.showBigPicture(picture);
+      window.picture.showFormWithData(picture);
     });
     return pictureElement;
   };
@@ -57,7 +59,7 @@
     });
 
     saveWebData(webData);
-    renderImages(Pictures);
+    renderImages(pictures);
 
     filters.classList.remove('img-filters--inactive');
     setSortingButtonsBehavior();
@@ -65,18 +67,15 @@
 
   var saveWebData = function (webData) {
     webData.forEach(function (item, index) {
-      Pictures[index] = item;
+      pictures[index] = item;
     });
   };
 
   var setSortingButtonsBehavior = function () {
-
-
     sortingButtons.forEach(function (button) {
       button.addEventListener('click', onFilterButtonsClick);
     });
   };
-
 
   var onFilterButtonsClick = function (evt) {
     var sortingActiveAttribute = 'img-filters__button--active';
@@ -85,15 +84,15 @@
     });
     evt.target.classList.add(sortingActiveAttribute);
 
-    sortAndRenderImages(mapClassWithData[evt.target.id]());
+    sortAndRenderImages(MapClassWithData[evt.target.id]());
   };
 
   var getDefaultImages = function () {
-    return Pictures.slice();
+    return pictures.slice();
   };
 
   var getImagesForSortingNew = function () {
-    return Pictures.slice().sort(compareRandom).slice(0, 9);
+    return pictures.slice().sort(compareRandom).slice(0, COUNT_OF_NEW_PICTURES);
   };
 
   var compareRandom = function () {
@@ -101,19 +100,19 @@
   };
 
   var getImagesForSortingDiscussed = function () {
-    return Pictures.slice().sort(function (value1, value2) {
+    return pictures.slice().sort(function (value1, value2) {
       return value2.comments.length - value1.comments.length;
     });
   };
 
-  var sortAndRenderImages = window.data.debounce(function (sortedArr) {
+  var sortAndRenderImages = window.backend.debounce(function (sortedArr) {
     renderImages(sortedArr);
   });
 
 
-  window.backend.load(successHandler, errorHandler, window.backend.TIMEOUT, window.backend.STATUS, window.backend.DATA_URL);
+  window.backend.load(successHandler, errorHandler, window.backend.DATA_URL);
 
-  var mapClassWithData = {
+  var MapClassWithData = {
     'filter-popular': getDefaultImages,
     'filter-new': getImagesForSortingNew,
     'filter-discussed': getImagesForSortingDiscussed

@@ -7,13 +7,13 @@
   var commentsLoaderButton = bigPictureForm.querySelector('.comments-loader');
   var commentsList = document.querySelector('.social__comments');
   var bigPictureCommentInput = document.querySelector('.social__footer-text');
-  var Comments = [];
+  var comments = [];
   var commentLoaderElement = bigPictureForm.querySelector('.comments-loader');
   var commentIndex = 0;
   var commentsCounterElement = bigPictureForm.querySelector('.comments-count');
 
 
-  var showBigPicture = function (data) {
+  var showFormWithData = function (data) {
     var bigPictureCloseElement = bigPictureForm.querySelector('.big-picture__cancel');
 
     displayBigPicture(data);
@@ -32,9 +32,9 @@
     var likesCounterElement = bigPictureForm.querySelector('.likes-count');
     var bigPictureDescription = bigPictureForm.querySelector('.social__caption');
 
-    Comments = dataPhoto.comments;
+    comments = dataPhoto.comments;
     resetIndex();
-    var firstLoadCommentList = getCommentListFragment(Comments);
+    var firstLoadCommentList = getCommentListFragment(comments);
     clearCommentsList();
     commentsList.appendChild(firstLoadCommentList);
 
@@ -53,7 +53,7 @@
   };
 
   var onLoaderCommentsClick = function () {
-    var fragmentCommentList = getCommentListFragment(Comments);
+    var fragmentCommentList = getCommentListFragment(comments);
     commentsList.appendChild(fragmentCommentList);
   };
 
@@ -104,7 +104,7 @@
 
 
   window.picture = {
-    showBigPicture: showBigPicture,
+    showFormWithData: showFormWithData
   };
 
 })();
