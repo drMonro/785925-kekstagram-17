@@ -49,10 +49,7 @@
 
     xhr.timeout = TIMEOUT;
     xhr.open(method, url);
-    if (data) {
-      xhr.send(data);
-    }
-    xhr.send();
+    xhr.send(data);
   };
 
   var debounce = function (cb) {
@@ -76,4 +73,3 @@
     debounce: debounce
   };
 })();
-
