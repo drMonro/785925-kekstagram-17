@@ -3,6 +3,7 @@
 (function () {
   var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
   var MAX_COMMENTS_LENGTH = 140;
+  var MAX_HASH_TAG_LENGTH = 20;
   var MAX_COMMENTS_COUNT = 5;
 
   var imageEditorOverlay = document.querySelector('.img-upload__overlay');
@@ -27,6 +28,7 @@
         return hashTag.toLowerCase();
       });
     var message = '';
+    var uniqueHashTags = getUniqueHashTagsList(hashTags);
 
     if (hashTags.length === 0) {
       message = '';
@@ -34,7 +36,7 @@
       message = 'Нельзя указать больше пяти хэш-тегов';
     } else {
       hashTags.forEach(function (tag, index) {
-        message = getValidationHashTagsErrorMessage(hashTags, index);
+        message = getValidationHashTagsErrorMessage(hashTags, index, uniqueHashTags);
         if (message) {
           return;
         }
@@ -43,13 +45,18 @@
     window.utils.hashTagsInput.setCustomValidity(message);
   };
 
-  var getValidationHashTagsErrorMessage = function (hashTags, i) {
+  var getUniqueHashTagsList = function (userTags) {
     var uniqueHashTags = [];
-    var message = '';
+    userTags.forEach(function (userTag) {
+      if (uniqueHashTags.indexOf(userTag) === -1) {
+        uniqueHashTags.push(userTag);
+      }
+    });
+    return uniqueHashTags;
+  };
 
-    if (uniqueHashTags.indexOf(hashTags[i]) === -1) {
-      uniqueHashTags.push(hashTags[i]);
-    }
+  var getValidationHashTagsErrorMessage = function (hashTags, i, uniqueHashList) {
+    var message = '';
 
     if (hashTags[i].charAt(0) === '') {
       message = '';
@@ -59,17 +66,17 @@
       message = 'Хеш-теги должны состоять хотя бы из одного символа';
     } else if (hashTags[i].indexOf('#', 1) > 0) {
       message = 'Хеш-теги должны разделяться пробелами';
-    } else if (uniqueHashTags[i] !== hashTags[i]) {
+    } else if (uniqueHashList[i] !== hashTags[i]) {
       message = 'Один и тот же хэш-тег не может быть использован дважды';
-    } else if (hashTags[i].length > 20) {
+    } else if (hashTags[i].length > MAX_HASH_TAG_LENGTH) {
       message = 'Максимальная длина одного хэш-тега 20 символов';
     }
     return message;
   };
 
-  var addValidationComments = function (maxLength) {
+  var addValidationComments = function () {
     var message = '';
-    if (window.utils.commentsInput.value.length > maxLength) {
+    if (window.utils.commentsInput.value.length > MAX_COMMENTS_LENGTH) {
       message = 'Максимальная длина комментария 140 символов';
     }
     return window.utils.commentsInput.setCustomValidity(message);
@@ -193,12 +200,12 @@
     return true;
   });
 
-  window.utils.hashTagsInput.addEventListener('change', function () {
+  window.utils.hashTagsInput.addEventListener('input', function () {
     addValidationHashTags();
   });
 
-  window.utils.commentsInput.addEventListener('change', function () {
-    addValidationComments(MAX_COMMENTS_LENGTH);
+  window.utils.commentsInput.addEventListener('input', function () {
+    addValidationComments();
   });
 
   imageUploadForm.addEventListener('submit', function (evt) {
